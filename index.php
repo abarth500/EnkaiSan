@@ -23,7 +23,7 @@ $URL = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS']!="off")?"https://":"http
 //  -個人情報の為、必ずWeb非公開に
 //  -最後のスラッシュ忘れずに
 //  -このPHPプログラムからrw権限必須
-$DIR = "../vote/";
+$DIR = "vote/";
 
 //管理者パスワード
 //  -URLに含む事のできる文字のみ
