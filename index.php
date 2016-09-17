@@ -31,21 +31,21 @@ $DIR = "vote/";
 $PASSWORD=trim(file_get_contents($DIR.'.password'));
 
 if (php_sapi_name() == 'cli') {
-    echo "Account for Web Server:\t\t(default=nobody)\n";
+    echo "Account for Web Server:\t\t(default=nobody)\n>";
     $acc = trim(fgets(STDIN));
     if($acc==""){
         $acc = 'nobody';
     }
     echo "\t->Set '".$acc."'\n";
     $rtn = chgrp($DIR,$acc);
-    echo "chgrp Dir:\t".($rtn?'true':'false');
+    echo "chgrp Dir:\t".($rtn?'true':'false')."\n";
     $rtn = chgrp($DIR.'.password',$acc);
-    echo "chgrp File:\t".($rtn?'true':'false');
+    echo "chgrp File:\t".($rtn?'true':'false')."\n";
     $rtn = chmod($DIR,0770);
-    echo "chmod Dir:\t".($rtn?'true':'false');
+    echo "chmod Dir:\t".($rtn?'true':'false')."\n";
     $rtn = chmod($DIR.'.password',0770);
-    echo "chmod File:\t".($rtn?'true':'false');
-    echo "\n";
+    echo "chmod File:\t".($rtn?'true':'false')."\n";
+    echo "\n\n";
     echo "Admin Password:        \t\t(default=uniqid())";
     $PASSWORD = trim(fgets(STDIN));
     $rtn = file_put_contents($DIR.'.password',$$PASSWORD);
