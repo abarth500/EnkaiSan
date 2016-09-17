@@ -61,6 +61,22 @@ if (php_sapi_name() == 'cli') {
 
 $FILE = array("source"=>"member.csv","subject"=>"subject.txt","mail_from"=>"from.txt","mail" => "mail.txt", "sign" => "sign.txt", "choice" => "choice.txt","deadline"=>"deadline.csv","total"=>"total.txt", "pub_total"=>"pubtot.txt" ,"result"=>"result.csv");
 
+function sendMail($to,$subject,$body,$from,$sender){
+    if((@include_once('Mail.php')) === false){
+        $headers = array(
+            "To" => $to,         // →ここで指定したアドレスには送信されない
+            "From" => $from,
+            "Return-Path"=>$sender,
+            "Subject" => mb_encode_mimeheader($subject)
+        );
+        $body = mb_convert_encoding($body,"ISO-2022-JP","AUTO");
+        $smtp = Mail::factory('smtp', array());
+        return $smtp->send($to, $headers, $body);
+    }else{
+        return mb_send_mail($to,$subject,$body,$from,"-f".$sender);
+    }
+}
+
 function sumup($results,$items){
 	$sum = 0;
 	foreach($items as $i){
@@ -400,7 +416,8 @@ Senderメールアドレス:<input type="text" name="mail_sender" size="70" /><b
 				$mail = getMailBody($name,$nakami,$choice,$URL,$id,$sign);
 				if(isset($_REQUEST["now"]) and $_REQUEST["now"] == "checked"){
 					echo $name."様(".$mailto.")へ送信--";
-					$r = mb_send_mail($mailto,$subject,$mail,$MAILHEADER,"-f".$SENDER);
+					//$r = mb_send_mail($mailto,$subject,$mail,$MAILHEADER,"-f".$SENDER);
+                    $r = sendMail($mailto,$subject,$mail,$MAILHEADER,$SENDER);
 					echo $r?"[成功]<br/>":"[失敗]<br/>";
 				}else{
 					echo "<h2>以下のようなアンケートメールが再送時に送られます</h2>";
@@ -444,7 +461,8 @@ Senderメールアドレス:<input type="text" name="mail_sender" size="70" /><b
 					$mailto = trim($mailto);
 					$mail = getMailBody($name,$nakami,$choice,$URL,$id,$sign);
 					echo $name."様(".$mailto.")へ送信--";
-					$r = mb_send_mail($mailto,$subject,$mail,$MAILHEADER,"-f".$SENDER);
+					//$r = mb_send_mail($mailto,$subject,$mail,$MAILHEADER,"-f".$SENDER);
+                    $r = sendMail($mailto,$subject,$mail,$MAILHEADER,$SENDER);
 					echo $r?"[成功]<br/>":"[失敗]<br/>";
 				}
 				echo "<h1>管理・集計ページ</h1>";
