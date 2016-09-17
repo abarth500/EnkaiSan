@@ -18,7 +18,6 @@ $URL = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS']!="off")?"https://":"http
 //する可能性があります。
 
 
-
 //結果格納ディレクトリ(最初に作ってください)
 //  -個人情報の為、必ずWeb非公開に
 //  -最後のスラッシュ忘れずに
@@ -31,6 +30,18 @@ $DIR = "vote/";
 $PASSWORD=trim(file_get_contents($DIR.'.password'));
 
 if (php_sapi_name() == 'cli') {
+    echo "Admin Password:        \t\t(default=uniqid())\n>";
+    $PASSWORD = trim(fgets(STDIN));
+    if($PASSWORD == ""){
+        $PASSWORD = uniqid();
+    }
+    $rtn = file_put_contents($DIR.'.password',$PASSWORD);
+    echo "set Password:\t".($rtn?'true':'false')."\n";
+    echo "\n";
+    echo "Envelope From Address:\n>";
+    $SENDER = trim(fgets(STDIN));
+    $rtn = file_put_contents($DIR.'.sender',$SENDER)."\n";
+    echo "\n";
     echo "Account for Web Server:\t\t(default=nobody)\n>";
     $acc = trim(fgets(STDIN));
     if($acc==""){
@@ -41,17 +52,16 @@ if (php_sapi_name() == 'cli') {
     echo "chgrp Dir:\t".($rtn?'true':'false')."\n";
     $rtn = chgrp($DIR.'.password',$acc);
     echo "chgrp File:\t".($rtn?'true':'false')."\n";
+    $rtn = chgrp($DIR.'.sender',$acc);
+    echo "chgrp File:\t".($rtn?'true':'false')."\n";
     $rtn = chmod($DIR,0770);
     echo "chmod Dir:\t".($rtn?'true':'false')."\n";
-    $rtn = chmod($DIR.'.password',0770);
+    $rtn = chmod($DIR.'.password',0660);
+    echo "chmod File:\t".($rtn?'true':'false')."\n";
+    $rtn = chmod($DIR.'.sender',0660);
     echo "chmod File:\t".($rtn?'true':'false')."\n";
     echo "\n";
-    echo "Admin Password:        \t\t(default=uniqid())\n>";
-    $PASSWORD = trim(fgets(STDIN));
-    $rtn = file_put_contents($DIR.'.password',$PASSWORD);
-    echo "set Password:\t".($rtn?'true':'false');
-    echo "\n\n";
-    echo "[Done!]\n";
+    echo "[Done!]\n\tSee index.php?admin=".$PASSWORD."\n\n";
     exit;
 }else if($PASSWORD==""){
 	echo "Please run index.php from command line to setup EnkaiSan.";
@@ -62,7 +72,7 @@ if (php_sapi_name() == 'cli') {
 $FILE = array("source"=>"member.csv","subject"=>"subject.txt","mail_from"=>"from.txt","mail" => "mail.txt", "sign" => "sign.txt", "choice" => "choice.txt","deadline"=>"deadline.csv","total"=>"total.txt", "pub_total"=>"pubtot.txt" ,"result"=>"result.csv");
 
 function sendMail($to,$subject,$body,$from,$sender){
-    if((@include_once('Mail.php')) === false){
+    if((@include_once('Mail.php')) !== false){
         $headers = array(
             "To" => $to,         // →ここで指定したアドレスには送信されない
             "From" => $from,
@@ -161,8 +171,6 @@ if(!isset($_REQUEST["u"])){
 差出人名:<input type="text" name="mail_fromname" size="70" /><br />
 差出人メールアドレス:<input type="text" name="mail_from" size="70" /><br />
 ※差出人は相手先に表示されるアドレス<br/>
-Senderメールアドレス:<input type="text" name="mail_sender" size="70" /><br />
-※Senderはエラーメールの自動返送先アドレス。スパム判定されないためには、このプログラムがあるサーバ上のアドレスが望ましい。<br/>
 <h2>メール通知文</h2>
 ●●●●様　(メール冒頭に宛名が自動で挿入されます)<br/>
 <textarea name="mail" rows="10" cols="60" wrap="hard">お世話になっております。以下のアンケートにお答えください。
@@ -286,10 +294,6 @@ Senderメールアドレス:<input type="text" name="mail_sender" size="70" /><b
 				if(!isset($_REQUEST["mail_fromname"]) or $_REQUEST["mail_fromname"] == ""){
 					$ERROR[] = "差出人名が記入されていません。";
 				}
-				if(!isset($_REQUEST["mail_sender"]) or $_REQUEST["mail_sender"] == ""){
-					$NOTICE[] = "Senderに差出人メールアドレスが設定されました。";
-					$_REQUEST["mail_sender"] = $_REQUEST["mail_from"];
-				}
 				if(!isset($_REQUEST["mail_"]) or $_REQUEST["mail_"] == ""){
 					$ERROR[] = "メール題名が記入されていません。";
 				}
@@ -334,7 +338,7 @@ Senderメールアドレス:<input type="text" name="mail_sender" size="70" /><b
 				//アンケート生成
 				$MAIL = $_REQUEST["mail_from"];
 				$KANJI = $_REQUEST["mail_fromname"];
-				$SENDER = $_REQUEST["mail_sender"];
+				$SENDER = file_get_contents($DIR.".sender");
 				file_put_contents($DIR.$FILE["mail_from"],$SENDER."*".$MAIL."*".$KANJI);
 				file_put_contents($DIR.$FILE["subject"],$_REQUEST["mail_"]);
 				file_put_contents($DIR.$FILE["mail"],$_REQUEST["mail"]);
