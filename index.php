@@ -45,10 +45,10 @@ if (php_sapi_name() == 'cli') {
     echo "chmod Dir:\t".($rtn?'true':'false')."\n";
     $rtn = chmod($DIR.'.password',0770);
     echo "chmod File:\t".($rtn?'true':'false')."\n";
-    echo "\n\n";
-    echo "Admin Password:        \t\t(default=uniqid())";
+    echo "\n";
+    echo "Admin Password:        \t\t(default=uniqid())\n>";
     $PASSWORD = trim(fgets(STDIN));
-    $rtn = file_put_contents($DIR.'.password',$$PASSWORD);
+    $rtn = file_put_contents($DIR.'.password',$PASSWORD);
     echo "set Password:\t".($rtn?'true':'false');
     echo "\n\n";
     echo "[Done!]\n";
