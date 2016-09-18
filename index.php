@@ -60,6 +60,7 @@ if (php_sapi_name() == 'cli') {
         $acc = 'nobody';
     }
     //--
+    echo "\n";
     echo "Title of your service\t\t(default=".$CONFIG['title'].")\n> ";
     $rtn = trim(fgets(STDIN));
     if($rtn!=""){
