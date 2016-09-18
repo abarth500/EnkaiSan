@@ -203,6 +203,7 @@ function names ($results,$items){
 }
 
 function printTotal($totals,$results){
+    global $COL,$lCOL;
 	$c = 0;
 	foreach($totals as $total){
 		list($mode,$title,$item) = explode("|",$total);
