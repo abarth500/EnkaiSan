@@ -50,7 +50,7 @@ if (php_sapi_name() == 'cli') {
     //--
     echo "Envelope From Address:\n> ";
     $SENDER = trim(fgets(STDIN));
-    $rtn = file_put_contents($DIR.'.sender',$SENDER)."\n";
+    $rtn = file_put_contents($DIR.'.sender',$SENDER);
     echo "\t->set:\t".($rtn?'true':'false')."\n";
     echo "\n";
     //--
@@ -87,6 +87,7 @@ if (php_sapi_name() == 'cli') {
     if($rtn!=""){
         $CONFIG['color'] = $rtn;
     }
+    $rtn = file_put_contents($DIR.'.config',json_encode($CONFIG));
     echo "\n";
     //--
     $rtn = chgrp($DIR,$acc);
