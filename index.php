@@ -70,7 +70,7 @@ if (php_sapi_name() == 'cli') {
     $init = true;
     do{
         if(!$init){
-            echo "[ERROR]===Wrong color. Chose one of the following list.===\n";
+            echo "[ERROR]===Wrong color. Choose one of the following list.===\n";
         }
         echo "Key color of your service\t\t(default=".$CONFIG['color'].")\n";
         echo "\tRed\tPink\tPurple\tDeepPurple\n";
