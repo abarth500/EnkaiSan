@@ -140,6 +140,28 @@ $COL = array(
     "BlueGrey"=>"#607D8B"
 );
 
+$lCOL = array(
+    "Red" => "#ffcdd2",
+    "Pink"=> "#F8BBD0",
+    "Purple"=>"#E1BEE7",
+    "DeepPurple"=>"#D1C4E9",
+    "Indigo"=>"#C5CAE9",
+    "Blue"=>"#BBDEFB",
+    "LightBlue"=>"#B3E5FC",
+    "Cyan"=>"#B2EBF2",
+    "Teal"=>"#B2DFDB",
+    "Green"=>"#C8E6C9",
+    "LightGreen"=>"#DCEDC8",
+    "Lime"=>"#F0F4C3",
+    "Yellow"=>"#FFF9C4",
+    "Amber"=>"#FFECB3",
+    "Orange"=>"#FFE0B2",
+    "DeepOrange"=>"#FFCCBC",
+    "Brown"=>"#D7CCC8",
+    "Grey"=>"#E0E0E0",
+    "BlueGrey"=>"#CFD8DC"
+);
+
 function sendMail($to,$subject,$body,$from,$sender){
     if((@include_once('Mail.php')) !== false){
         $headers = array(
@@ -195,10 +217,10 @@ function printTotal($totals,$results){
 		}
 		$c++;
 		$items = explode(",",trim($item));
-		echo '<div style="width:300px;float:left;margin:3px;padding:3px;background-color:#d7a98c;">';
-		echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:#d7a98c;">'.$title.'</div>';
-		echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:#d7a98c;font-size:xx-large;">'.sumup($results,$items).'人</div>';
-		$color=array("fff","fff2e5","fff2e5","fff");
+		echo '<div style="width:300px;float:left;margin:3px;padding:3px;background-color:'.$COL[$CONFIG['color']].';">';
+		echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:'.$COL[$CONFIG['color']].';">'.$title.'</div>';
+		echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:'.$COL[$CONFIG['color']].';font-size:xx-large;">'.sumup($results,$items).'人</div>';
+		$color=array("fff",$lCOL[$CONFIG['color']],$lCOL[$CONFIG['color']],"fff");
 		$co = 0;
 		if($mode == "*"){
 			$names = names($results,$items);
