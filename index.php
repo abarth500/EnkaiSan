@@ -33,7 +33,7 @@ if(file_exists($DIR.'.password')){
 }
 $CONFIG = array();
 if(file_exists($DIR.'.config')){
-    $CONFIG=json_decode(trim(file_get_contents($DIR.'.config')));
+    $CONFIG=json_decode(trim(file_get_contents($DIR.'.config')),true);
 }
 
 if (php_sapi_name() == 'cli') {
