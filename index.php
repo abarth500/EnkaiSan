@@ -67,14 +67,23 @@ if (php_sapi_name() == 'cli') {
     }
     echo "\n";
     //--
-    echo "Key color of your service\t\t(default=".$CONFIG['color'].")\n";
-    echo "\tRed\tPink\tPurple\tDeepPurple\n";
-    echo "\tIndigo\tBlue\tLightBlue\tCyan\n";
-    echo "\tTeal\tGreen\tLightGreen\tLime\n";
-    echo "\tYellow\tAmber\tOrange\tDeepOrange\n";
-    echo "\tBrown\tGrey\tBlueGrey\n> ";
-    //--ループにして、値チェック　TODO-------------
-    $rtn = trim(fgets(STDIN));
+    $init = true;
+    do{
+        if(!$init){
+            echo "[ERROR]===Wrong color. Chose one of the following list.===\n";
+        }
+        echo "Key color of your service\t\t(default=".$CONFIG['color'].")\n";
+        echo "\tRed\tPink\tPurple\tDeepPurple\n";
+        echo "\tIndigo\tBlue\tLightBlue\tCyan\n";
+        echo "\tTeal\tGreen\tLightGreen\tLime\n";
+        echo "\tYellow\tAmber\tOrange\tDeepOrange\n";
+        echo "\tBrown\tGrey\tBlueGrey\n> ";
+        $rtn = trim(fgets(STDIN));
+        if($rtn == ""){
+            break;
+        }
+        $init = false;
+    }while(array_search(rtn,array_keys($COL)));
     if($rtn!=""){
         $CONFIG['color'] = $rtn;
     }
