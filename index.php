@@ -27,39 +27,75 @@ $DIR = "vote/";
 //管理者パスワード
 //  -URLに含む事のできる文字のみ
 //  -$URL."?admin=".$PASSWORD が管理者用メニューになります
-$PASSWORD=trim(file_get_contents($DIR.'.password'));
+$PASSWORD = "";
+if(file_exists($DIR.'.password')){
+    $PASSWORD=trim(file_get_contents($DIR.'.password'));
+}
+$CONFIG = array();
+if(file_exists($DIR.'.config')){
+    $CONFIG=json_decode(trim(file_get_contents($DIR.'.config')));
+}
 
 if (php_sapi_name() == 'cli') {
-    echo "Admin Password:        \t\t(default=uniqid())\n>";
+    //--
+    echo "Admin Password:        \t\t(default=uniqid())\n> ";
     $PASSWORD = trim(fgets(STDIN));
     if($PASSWORD == ""){
         $PASSWORD = uniqid();
     }
     $rtn = file_put_contents($DIR.'.password',$PASSWORD);
-    echo "set Password:\t".($rtn?'true':'false')."\n";
+    //--
+    echo "\t->set:\t".($rtn?'true':'false')."\n";
     echo "\n";
-    echo "Envelope From Address:\n>";
+    //--
+    echo "Envelope From Address:\n> ";
     $SENDER = trim(fgets(STDIN));
     $rtn = file_put_contents($DIR.'.sender',$SENDER)."\n";
+    echo "\t->set:\t".($rtn?'true':'false')."\n";
     echo "\n";
+    //--
     echo "Account for Web Server:\t\t(default=nobody)\n>";
     $acc = trim(fgets(STDIN));
     if($acc==""){
         $acc = 'nobody';
     }
-    echo "\t->Set '".$acc."'\n";
+    //--
+    echo "Title of your service\t\t(default=".$CONFIG['title'].")\n> ";
+    $rtn = trim(fgets(STDIN));
+    if($rtn!=""){
+        $CONFIG['title'] = $rtn;
+    }
+    echo "\n";
+    //--
+    echo "Key color of your service\t\t(default=".$CONFIG['color'].")\n";
+    echo "\tRed\tPink\tPurple\tDeepPurple\n";
+    echo "\tIndigo\tBlue\tLightBlue\tCyan\n";
+    echo "\tTeal\tGreen\tLightGreen\tLime\n";
+    echo "\tYellow\tAmber\tOrange\tDeepOrange\n";
+    echo "\tBrown\tGrey\tBlueGrey\n> ";
+    //--ループにして、値チェック　TODO-------------
+    $rtn = trim(fgets(STDIN));
+    if($rtn!=""){
+        $CONFIG['color'] = $rtn;
+    }
+    echo "\n";
+    //--
     $rtn = chgrp($DIR,$acc);
     echo "chgrp Dir:\t".($rtn?'true':'false')."\n";
     $rtn = chgrp($DIR.'.password',$acc);
-    echo "chgrp File:\t".($rtn?'true':'false')."\n";
+    echo "chgrp File[.password]:\t".($rtn?'true':'false')."\n";
     $rtn = chgrp($DIR.'.sender',$acc);
-    echo "chgrp File:\t".($rtn?'true':'false')."\n";
+    echo "chgrp File[.sender]:\t".($rtn?'true':'false')."\n";
+    $rtn = chgrp($DIR.'.config',$acc);
+    echo "chgrp File[.config]:\t".($rtn?'true':'false')."\n";
     $rtn = chmod($DIR,0770);
     echo "chmod Dir:\t".($rtn?'true':'false')."\n";
-    $rtn = chmod($DIR.'.password',0660);
-    echo "chmod File:\t".($rtn?'true':'false')."\n";
-    $rtn = chmod($DIR.'.sender',0660);
-    echo "chmod File:\t".($rtn?'true':'false')."\n";
+    $rtn = chmod($DIR.'.password',0640);
+    echo "chmod File[.password]:\t".($rtn?'true':'false')."\n";
+    $rtn = chmod($DIR.'.sender',0640);
+    echo "chmod File[.sender]:\t".($rtn?'true':'false')."\n";
+    $rtn = chmod($DIR.'.config',0640);
+    echo "chmod File[.config]:\t".($rtn?'true':'false')."\n";
     echo "\n";
     echo "[Done!]\n\tSee index.php?admin=".$PASSWORD."\n\n";
     exit;
@@ -70,6 +106,28 @@ if (php_sapi_name() == 'cli') {
 //===============================================================
 
 $FILE = array("source"=>"member.csv","subject"=>"subject.txt","mail_from"=>"from.txt","mail" => "mail.txt", "sign" => "sign.txt", "choice" => "choice.txt","deadline"=>"deadline.csv","total"=>"total.txt", "pub_total"=>"pubtot.txt" ,"result"=>"result.csv");
+
+$COL = array(
+    "Red" => "#f44336",
+    "Pink"=> "#E91E63",
+    "Purple"=>"#9C27B0",
+    "DeepPurple"=>"#673AB7",
+    "Indigo"=>"#3F51B5",
+    "Blue"=>"#2196F3",
+    "LightBlue"=>"#03A9F4",
+    "Cyan"=>"#00BCD4",
+    "Teal"=>"#009688",
+    "Green"=>"#4CAF50",
+    "LightGreen"=>"#8BC34A",
+    "Lime"=>"#CDDC39",
+    "Yellow"=>"#FFEB3B",
+    "Amber"=>"#FFC107",
+    "Orange"=>"#FF9800",
+    "DeepOrange"=>"#FF5722",
+    "Brown"=>"#795548",
+    "Grey"=>"#9E9E9E",
+    "BlueGrey"=>"#607D8B"
+);
 
 function sendMail($to,$subject,$body,$from,$sender){
     if((@include_once('Mail.php')) !== false){
@@ -155,7 +213,13 @@ function getMailBody($name,$nakami,$choice,$URL,$id,$sign){
 }
 ?><html>
 <head>
-	<title>静岡大学情報学部 Rapid Q&amp;Aシステム「宴会さん」</title>
+	<title><?=$CONFIG['title']?> - 宴会さん</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
 <?php
@@ -164,7 +228,10 @@ if(!isset($_REQUEST["u"])){
 		if(!isset($_REQUEST["mode"])){
 			//管理画面
 			if(!file_exists($DIR.$FILE["result"])){
-?><form enctype="multipart/form-data" action="<?=$URL?>" method="POST">
+?><div class="jumbotron">
+<h1><?~$CONFIG['title']?>　<small>宴会さん</small></h1>
+</div>
+<form enctype="multipart/form-data" action="<?=$URL?>" method="POST">
 <h1>アンケート作成</h1>
 <h2>メールヘッダ情報</h2>
 メール件名:<input type="text" name="mail_" size="70" /><br />
@@ -222,8 +289,8 @@ if(!isset($_REQUEST["u"])){
 <?php
 			}else{
 ?>
-<h1 style="border-top: inset 10px #ec6800;">管理メニュー</h1>
-<h2 style="border-left: inset 50px #ec6800;border-top: inset 1px #ec6800;">アンケート送付先追加</h2>
+<h1 style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">管理メニュー</h1>
+<h2 style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート送付先追加</h2>
 <form action="<?=$URL?>" method="POST">
 メールアドレス<input type="text" name="mail" size="70" /><br/>
 氏名<input type="text" name="name" size="70" /><br/>
@@ -231,19 +298,19 @@ if(!isset($_REQUEST["u"])){
 <input type="submit" name="mode" value="add" style="font-size:36px;padding-left:80px;padding-right:80px;"><br />
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
 </form>
-<h2 style="border-left: inset 50px #ec6800;border-top: inset 1px #ec6800;">アンケート再送(未報告者のみ)</h2>
+<h2 style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート再送(未報告者のみ)</h2>
 <form action="<?=$URL?>" method="POST">
 <input type="submit" name="mode" value="send" style="font-size:36px;padding-left:80px;padding-right:80px;"><br />
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
 <input type="hidden" name="resend" value="true">
 </form>
-<h2 style="border-left: inset 50px #ec6800;border-top: inset 1px #ec6800;">アンケート初期化</h2>
+<h2 style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート初期化</h2>
 <form action="<?=$URL?>" method="POST">
 管理者パスワード:<input type="text" name="admin"/><br/>
 <input type="submit" name="mode" value="delete" style="font-size:36px;padding-left:80px;padding-right:80px;"><br />
 ※アンケート結果も全て消去されます。
 </form>
-<h1 style="border-top: inset 10px #ec6800;">集計結果</h1>
+<h1 style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">集計結果</h1>
 <?php
 				$result = file($DIR.$FILE["result"]);
 				$results = array();
@@ -256,7 +323,7 @@ if(!isset($_REQUEST["u"])){
 				}else{
 					printTotal(file($DIR.$FILE["total"]),$results);
 				}
-?><h1 style="border-top: inset 10px #ec6800;">全結果</h1>
+?><h1 style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">全結果</h1>
 <?php
 				if(count($results) == 0){
 					echo "まだ登録がありません<br/>";
@@ -510,11 +577,11 @@ if(!isset($_REQUEST["u"])){
 	<div style="overflow:auto;height:250px;width:400px;margin-left : auto ; margin-right : auto ;background-image:url(votebg.gif);">
 		<div style="text-align:center;margin:40px 40px 10px 40px;font-size:16px;"><?=$NAME?>　様</div>
 		<div style="text-align:justify;margin:30px 40px 20px 40px;font-size:16px;">　現在の登録状況は以下のようになっております。登録内容を修正する場合はアンケートメールのURLをクリックしてください。</div>
-		<div style="color:#ec6800;text-align:center;margin:10px 40px 10px 40px;font-size:16px;"><?=$NOTE?></div>
+		<div style="color:<?=$COL[$CONFIG['color']]?>;text-align:center;margin:10px 40px 10px 40px;font-size:16px;"><?=$NOTE?></div>
 	</div>
 <?php
 		if(file_exists($DIR.$FILE["pub_total"])){
-			echo '<h1 style="border-top: inset 10px #ec6800;">集計結果</h1>';
+			echo '<h1 style="border-top: inset 10px <?=$COL[$CONFIG[\'color\']]?>;">集計結果</h1>';
 			printTotal(file($DIR.$FILE["pub_total"]),$results);
 		}
 	}else{
@@ -528,7 +595,7 @@ if(!isset($_REQUEST["u"])){
 	<div style="overflow:auto;height:250px;width:400px;margin-left : auto ; margin-right : auto ;background-image:url(votebg.gif);">
 		<div style="text-align:center;margin:40px 40px 10px 40px;font-size:16px;"><?=$NAME?>　様</div>
 		<div style="text-align:justify;margin:30px 40px 20px 40px;font-size:16px;">　本アンケートの回答は締め切られました。回答の変更等は直接[<a href="mailto:<? echo $MAIL; ?>"><? echo $KANJI; ?></a>]へご連絡ください。</div>
-		<div style="color:#ec6800;text-align:center;margin:10px 40px 10px 40px;font-size:16px;">期限：<? echo date("Y年m月d日",$d) ?></div>
+		<div style="color:<?=$COL[$CONFIG['color']]?>;text-align:center;margin:10px 40px 10px 40px;font-size:16px;">期限：<? echo date("Y年m月d日",$d) ?></div>
 	</div>
 <?php			exit;
 		}
@@ -539,7 +606,7 @@ if(!isset($_REQUEST["u"])){
 	<div style="overflow:auto;height:250px;width:400px;position:absolute;top:50%;left:50%;margin-top:-125px;margin-left:-200px;background-image:url(votebg.gif);">
 		<div style="text-align:center;margin:40px 40px 10px 40px;font-size:16px;"><?=$NAME?>　様</div>
 		<div style="text-align:justify;margin:30px 40px 20px 40px;font-size:16px;">　アンケートへのご協力ありがとうございました。下記のご回答承りました。</div>
-		<div style="color:#ec6800;text-align:center;margin:10px 40px 10px 40px;font-size:16px;"><?=$CHOICE?></div>
+		<div style="color:<?=$COL[$CONFIG['color']]?>;text-align:center;margin:10px 40px 10px 40px;font-size:16px;"><?=$CHOICE?></div>
 <?php
 		if(file_exists($DIR.$FILE["pub_total"])){
 ?>		<div style="text-align:center;margin:20px 40px 10px 40px;font-size:16px;">[<a href="<?=$URL?>?u=<?=$ID?>">集計結果を見る</a>]</div>
