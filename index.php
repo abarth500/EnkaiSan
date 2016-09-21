@@ -34,6 +34,11 @@ if(file_exists($DIR.'.password')){
 $CONFIG = array();
 if(file_exists($DIR.'.config')){
     $CONFIG=json_decode(trim(file_get_contents($DIR.'.config')),true);
+}else{
+    $CONFIG=array(
+        "title"=>"Rapid Q&amp;A Service",
+        "color"=>"Indigo"
+    );
 }
 
 if (php_sapi_name() == 'cli') {
