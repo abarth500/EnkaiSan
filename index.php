@@ -89,7 +89,7 @@ if (php_sapi_name() == 'cli') {
             break;
         }
         $init = false;
-    }while(array_search(rtn,array_keys($COL)));
+    }while(array_search($rtn,array_keys($COL)));
     if($rtn!=""){
         $CONFIG['color'] = $rtn;
     }
@@ -170,16 +170,17 @@ $lCOL = array(
 function sendMail($to,$subject,$body,$from,$sender){
     if((@include_once('Mail.php')) !== false){
         $headers = array(
-            "To" => $to,         // →ここで指定したアドレスには送信されない
+            "To" => $to,
             "From" => $from,
             "Return-Path"=>$sender,
             "Subject" => mb_encode_mimeheader($subject)
         );
         $body = mb_convert_encoding($body,"ISO-2022-JP","AUTO");
         $smtp = Mail::factory('smtp', array());
-        return $smtp->send($to, $headers, $body);
+        $mail = $smtp->send($to, $headers, $body);
+        return !(PEAR::isError($mail));
     }else{
-        return mb_send_mail($to,$subject,$body,$from,"-f".$sender);
+        return mb_send_mail($to,$subject,$body,"From: ".$from." \n","-f".$sender);
     }
 }
 
@@ -208,7 +209,7 @@ function names ($results,$items){
 }
 
 function printTotal($totals,$results){
-    global $COL,$lCOL;
+    global $COL,$lCOL,$CONFIG;
 	$c = 0;
 	foreach($totals as $total){
 		list($mode,$title,$item) = explode("|",$total);
@@ -217,21 +218,21 @@ function printTotal($totals,$results){
 				echo "<br style=\"clear:both;\" />";
 			}
 			if($title!=""){
-				echo '<div style="margin-top:10px;font-size:x-large;border-top: inset 3px #f6ad49;">'.$title."</div>";
+				echo '<div style="margin-top:10px;font-size:x-large;border-top: inset 3px '.$COL[$CONFIG['color']].';">'.$title."</div>";
 			}
 			continue;
 		}
 		$c++;
 		$items = explode(",",trim($item));
 		echo '<div style="width:300px;float:left;margin:3px;padding:3px;background-color:'.$COL[$CONFIG['color']].';">';
-		echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:'.$COL[$CONFIG['color']].';">'.$title.'</div>';
-		echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:'.$COL[$CONFIG['color']].';font-size:xx-large;">'.sumup($results,$items).'人</div>';
-		$color=array("fff",$lCOL[$CONFIG['color']],$lCOL[$CONFIG['color']],"fff");
+		echo '<div style="color:#fff;text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:'.$COL[$CONFIG['color']].';">'.$title.'</div>';
+		echo '<div style="color:#fff;text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:'.$COL[$CONFIG['color']].';font-size:xx-large;">'.sumup($results,$items).'人</div>';
+		$color=array("#fff",$lCOL[$CONFIG['color']],$lCOL[$CONFIG['color']],"#fff");
 		$co = 0;
 		if($mode == "*"){
 			$names = names($results,$items);
 			foreach($names as $name){
-				echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:140px;border-bottom:solid 1px #393e4f;border-right:solid 1px #393e4f;border-top:solid 1px #d7a98c;border-left:solid 1px #d7a98c;padding:4px;float:left;background-color:#'.$color[$co++%4].';">'.$name.'</div>';
+				echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:140px;border-bottom:solid 1px #393e4f;border-right:solid 1px #393e4f;border-top:solid 1px #d7a98c;border-left:solid 1px #d7a98c;padding:4px;float:left;background-color:'.$color[$co++%4].';">'.$name.'</div>';
 			}
 		}
 		echo "</div>";
@@ -253,6 +254,7 @@ function getMailBody($name,$nakami,$choice,$URL,$id,$sign){
 ?><html>
 <head>
 	<title><?=$CONFIG['title']?> - 宴会さん</title>
+    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <!-- Optional theme -->
@@ -509,9 +511,8 @@ if(!isset($_REQUEST["u"])){
 				echo "<pre style=\"width:500px;padding:10px;background-color:#ddd;\">".$mail."</pre>";
 			}elseif($_REQUEST["mode"] == "add"){
 				list($SENDER,$MAIL,$KANJI) = explode("*",file_get_contents($DIR.$FILE["mail_from"]),3);
-				$MAILHEADER = "From: " .
-       				"".mb_encode_mimeheader (mb_convert_encoding($KANJI,"ISO-2022-JP","AUTO")) ."" .
-       				"<".$MAIL."> \n";
+				$MAILHEADER = mb_encode_mimeheader (mb_convert_encoding($KANJI,"ISO-2022-JP","AUTO")).
+       				"<".$MAIL.">";
 				$subject=file_get_contents($DIR.$FILE["subject"]);
 				if(isset($_REQUEST["resend"])){
 					$subject="再送 - ".$subject;
@@ -543,9 +544,7 @@ if(!isset($_REQUEST["u"])){
 			}elseif($_REQUEST["mode"] == "send"){
 				//vote送信
 				list($SENDER,$MAIL,$KANJI) = explode("*",file_get_contents($DIR.$FILE["mail_from"]),3);
-				$MAILHEADER = "From: " .
-       				"".mb_encode_mimeheader (mb_convert_encoding($KANJI,"ISO-2022-JP","AUTO")) ."" .
-       				"<".$MAIL."> \n";
+				$MAILHEADER = mb_encode_mimeheader (mb_convert_encoding($KANJI,"ISO-2022-JP","AUTO"))."<".$MAIL.">";
 				echo "<h1>アンケート送信！</h1>";
 				$members = file($DIR.$FILE["source"]);
 				$sent = array();
