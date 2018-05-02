@@ -251,16 +251,13 @@ function getMailBody($name,$nakami,$choice,$URL,$id,$sign){
 	$mail .= $sign;
 	return $mail;
 }
-?><html>
-<head>
+?><!DOCTYPE html>
+<html>
+<head lang="ja">
+	<meta charset="utf-8">
 	<title><?=$CONFIG['title']?> - 宴会さん</title>
-    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 </head>
 <body>
 <?php
@@ -269,64 +266,147 @@ if(!isset($_REQUEST["u"])){
 		if(!isset($_REQUEST["mode"])){
 			//管理画面
 			if(!file_exists($DIR.$FILE["result"])){
-?><div class="jumbotron">
-<h1><?~$CONFIG['title']?>　<small>宴会さん</small></h1>
+?>
+<div class="container">
+<div class="jumbotron">
+  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+  <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+  <hr class="my-4">
+	<p class="lead">
+    <a class="btn btn-primary btn-lg" href="#formHead" role="button">はじめる</a>
+  </p>
 </div>
+
+<a name="formHead">
 <form enctype="multipart/form-data" action="<?=$URL?>" method="POST">
-<h1>アンケート作成</h1>
-<h2>メールヘッダ情報</h2>
-メール件名:<input type="text" name="mail_" size="70" /><br />
-差出人名:<input type="text" name="mail_fromname" size="70" /><br />
-差出人メールアドレス:<input type="text" name="mail_from" size="70" /><br />
-※差出人は相手先に表示されるアドレス<br/>
-<h2>メール通知文</h2>
+<h2>アンケート作成</h2>
+<h3>メールヘッダ情報</h3>
+<div class="form-group">
+    <label for="inputMail">メール件名</label>
+    <input type="text" name="mail_" class="form-control" id="inputMail" placeholder="ここに記入したメール件名で送信されます。">
+</div>
+
+<div class="form-group">
+    <label for="inputFromName">差出人名</label>
+    <input type="text" name="mail_fromname" class="form-control" id="inputFromName" placeholder="メールの送信元として表示される名前を入力してください。">
+</div>
+
+<div class="form-group">
+    <label for="inputFrom">差出人メールアドレス</label>
+    <input type="email" name="mail_from" class="form-control" id="inputFrom" placeholder="メールの送信元として表示されるメールアドレスを入力してください。">
+</div>
+<hr class="my-4">
+<h3>メール通知文</h3>
 ●●●●様　(メール冒頭に宛名が自動で挿入されます)<br/>
-<textarea name="mail" rows="10" cols="60" wrap="hard">お世話になっております。以下のアンケートにお答えください。
+<div class="form-group">    
+<textarea name="mail" rows="10" cols="60" class="form-control" wrap="hard">
+お世話になっております。以下のアンケートにお答えください。
 
 真に勝手ながら●月●日までにご回答を頂きたくお願い申し上げます。
 
-回答方法ですが、ご希望の項目の直下にあるURLをクリックしてください。締切までは何度でもご回答いただけます。複数回のご回答を頂いたときは最後にご登録頂いたものをご回答とさせていただきます。</textarea>
-<h2>アンケート選択肢</h2>
-<textarea name="choice" rows="4" cols="60" wrap="soft">参加する
+回答方法ですが、ご希望の項目の直下にあるURLをクリックしてください。締切までは何度でもご回答いただけます。複数回のご回答を頂いたときは最後にご登録頂いたものをご回答とさせていただきます。
+</textarea>
+</div>
+
+<h3>アンケート選択肢</h3>
+<div class="form-group">    
+<textarea name="choice" rows="4" cols="60" class="form-control" wrap="soft">参加する
 参加するが遅刻する
 参加しない</textarea>
-<h2>署名</h2>
-<textarea name="sign" rows="3" cols="60" wrap="hard">以上の件よろしくお願いします。
+</div>
+
+<h3>署名</h3>
+<div class="form-group">    
+<textarea name="sign" rows="3" cols="60" class="form-control" wrap="hard">以上の件よろしくお願いします。
 --
-静岡大学情報学部</textarea><br /><br />
-<h2>回答〆切(YYYY/MM/DD)</h2>
-<input type="text" name="deadline" size="50"/> 本当の〆切:＋<input type="text" name="deadline_" size="5" value="9" />時間後
-<h2>集計項目</h2>
-<input type="checkbox" name="public" value="checked">集計結果を回答者にも公開する。</input><br/>
-<textarea name="total" rows="4" cols="60" wrap="hard" style="background-color:#ddd;">-|参加・不参加一覧|
+静岡大学情報学部
+</textarea>
+</div>
+<hr class="my-4">
+<h3>回答〆切(YYYY/MM/DD)</h3>
+<div class="form-group row">
+	<input type="text" class="form-control col-sm-4" name="deadline" size="50"  placeholder="2018/05/12">
+	<label class="col-sm-3 col-form-label"><p class="text-right">本当の〆切:＋</p></label>
+	<input type="text"  class="form-control col-sm-3" name="deadline_" size="5" value="9">
+	<label class="col-sm-2 col-form-label">時間後</label>
+</div>
+<hr class="my-4">
+<h3>集計項目</h3>
+<div class="form-check">
+    <input type="checkbox" class="form-check-input" name="public" id="labelChecked" checked>
+    <label class="form-check-label" for="labelChecked">集計結果を回答者にも公開する。</label>
+</div>
+<div class="form-group">    
+<textarea name="total" rows="4" cols="60"  class="form-control" wrap="hard" style="background-color:#ddd;">-|参加・不参加一覧|
 *|参加者数|0,1
 *|不参加数|2
 -|参加内訳|
 +|フル参加|0
-+|遅刻|1</textarea><br />
-[<a href="#" onclick="document.getElementById('setsumei').style.display='block';return false;">説明</a>]
-<div id="setsumei" style="display:none;margin:0% 5%;padding:5px 20px;border: 1px dotted #ff0000;"><p>
-<b>概要</b><br/>
-集計結果ページへ表示する項目を定義します。各行、見出しの表示、名簿の表示、人数の表示を定義でき、それらは集計結果ページに順に表示されます。
-</p><p>
-<b>-|参加・不参加一覧|</b><br/>
-<b>-|</b>で始まる行は大見出しを表します。結果を見やすくする為に使います。
-</p><p>
-<b>*|参加者数|0,1</b><br/>
-<b>*|</b>で始まる行は名簿の表示を意味します。項目見出しに続いて、集計項目をカンマで区切って定義します。この例ではアンケート選択肢の0番目の項目(参加する)と1番目の項目(参加するが遅刻する)を併せて表示します。
-</p><p>
-<b>+|フル参加|0</b><br/>
-<b>+|</b>で始まる行は人数のみの表示を意味します。項目見出しに続いて、集計項目をカンマで区切って定義します。この例ではアンケート選択肢の0番目の項目(参加する)を登録した人数を表示します。
-</p>[<a href="#" onclick="document.getElementById('setsumei').style.display='none';return false;">閉じる</a>]</div>
-<h2>送信先リスト</h2>
-名簿CSVファイル: <input name="mailtolist" type="file" /><br/>
++|遅刻|1</textarea>
+</div>
+<p class="text-right">
+<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalFormat">
+集計項目の記述フォーマットについて
+</button>
+</p>
+<div class="modal fade" id="modalFormat" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">集計項目記述フォーマット</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+<h4>概要</h4>
+<p>集計結果ページへ表示する項目を定義します。各行、見出しの表示、名簿の表示、人数の表示を定義でき、それらは集計結果ページに順に表示されます。</p>
+<h4>フォーマット</h4>
+<ul class="list-group list-group-flush">
+  <li class="list-group-item">
+  <h5>大見出し</h5>
+  <p><b>-|</b>で始めると大見出しを定義する事ができます。結果を見やすくする為に使います。</p>
+  <p>例<span class="badge badge-secondary">-|参加・不参加一覧|</span></p>
+  </li>
+  <li class="list-group-item">
+  <h5>参加者リスト(名前と人数)</h3>
+  <p><b>*|</b>で始めると名簿を表示します。項目名と集計項目(カンマ区切りで複数設定可)を定義します。下記の例では、アンケート選択し0番目と1番目の項目選択者の合計を参加者と言う項目名で表示します。</p>
+  <p>例<span class="badge badge-secondary">*|参加者数|0,1</span></p>
+  </li>
+  <li class="list-group-item">
+  <h5>参加者リスト(人数のみ)</h3>
+  <p><b>-|</b>で始めると名簿無しで集計人数のみ表示します。項目名と集計項目の指定方法は上記と同じです。</p>
+  <p>例<span class="badge badge-secondary">+|フル参加|0</span></p>
+  </li>
+</ul>
+</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="my-4">
+<h3>送信先リスト</h3>
+<div class="form-group">
+<label for="formFile">名簿CSVファイル:</label>
+<input type="file" name="mailtolist" class="form-control-file" id="formFile" aria-describedby="helpFile">
+<small id="helpFile" class="form-text text-muted">
 ※各行「名前,メールアドレス」の順<br/>
 ※エクセルで作成し、ファイルの種類を「<b>CSV(カンマ区切り)</b>」で保存したファイルも読み込めます。<br/>
-<br/>
-<input type="submit" name="mode" value="create" style="font-size:36px;padding-left:80px;padding-right:80px;"><br/>
-※createを押すと、確認画面が表示されます。(メールはまだ送信されません)
+</small>
+</div>
+<hr class="my-4">
+<div class="form-group">
+<button class="btn btn-outline-info" name="mode" value="create" type="submit" aria-describedby="helpSubmit">アンケート作成</button>
+<small id="helpSubmit" class="form-text text-muted">
+※確認画面が表示されます。(メールはまだ送信されません)
+</small>
+</div>
+
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
 </form>
+</div>
 <?php
 			}else{
 ?>
@@ -382,65 +462,81 @@ if(!isset($_REQUEST["u"])){
 		}else{
 			if($_REQUEST["mode"] == "create"){
 				//vote作成
-				echo "<h1>アンケート作成</h1>";
+?>
+<div class="container">
+<div class="jumbotron">
+  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+  <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+</div>
+<?php
 				//入力値チェック
 				$ERROR = array();
 				$NOTICE = array();
 				foreach($FILE as $file){
 					if(file_exists($DIR.$file)){
-						$ERROR[] ="既にアンケート用ファイルが存在します。新規のアンケートを作成する場合は、古いファイルを削除してください。";
+						$ERROR[] ='<li class="list-group-item list-group-item-danger">既にアンケート用ファイルが存在します。新規のアンケートを作成する場合は、古いファイルを削除してください。</li>';
 						break;
 					}
 				}
 				if($_FILES['mailtolist']['size'] <= 0 or $_FILES['mailtolist']['error'] != 0){
-					$ERROR[] = "CVSファイルのアップロードに失敗しました。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">CVSファイルのアップロードに失敗しました。</li>';
 
 				}
 				if(!isset($_REQUEST["mail_from"]) or $_REQUEST["mail_from"] == ""){
-					$ERROR[] = "差出人メールアドレスが記入されていません。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">差出人メールアドレスが記入されていません。</li>';
 				}
 				if(!isset($_REQUEST["mail_fromname"]) or $_REQUEST["mail_fromname"] == ""){
-					$ERROR[] = "差出人名が記入されていません。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">差出人名が記入されていません。</li>';
 				}
 				if(!isset($_REQUEST["mail_"]) or $_REQUEST["mail_"] == ""){
-					$ERROR[] = "メール題名が記入されていません。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">メール題名が記入されていません。</li>';
 				}
 				if(!isset($_REQUEST["mail"]) or $_REQUEST["mail"] == ""){
-					$ERROR[] = "メール本文が記入されていません。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">メール本文が記入されていません。</li>';
 				}
 				if(!isset($_REQUEST["choice"]) or $_REQUEST["choice"] == ""){
-					$ERROR[] = "アンケート選択肢が記入されていません。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">アンケート選択肢が記入されていません。</li>';
 				}
 				if(!isset($_REQUEST["sign"]) or $_REQUEST["sign"] == ""){
-					$ERROR[] = "メール署名が記入されていません。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">メール署名が記入されていません。</li>';
 				}
 				if(isset($_REQUEST["deadline"]) and $_REQUEST["deadline"] != ""){
 					$time = strtotime($_REQUEST["deadline"]);
 					if($time === FALSE){
-						$ERROR[] = "〆切日の日付フォーマットが異なっています。";
+						$ERROR[] = '<li class="list-group-item list-group-item-danger">〆切日の日付フォーマットが異なっています。';
 					}else{
 						$softdead = $time + 24 * 60 * 60;//その日の終わり
 					}
 				}else{
 					$softdead = time();
-					$ERROR[] = "アンケート〆切日が記入されていません";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">アンケート〆切日が記入されていません</li>';
 				}
 				if(isset($_REQUEST["deadline_"]) and $_REQUEST["deadline_"] != ""){
 					if(is_numeric($_REQUEST["deadline_"])){
 						if(intval($_REQUEST["deadline_"]) < 0){
-							$ERROR[] = "本当の〆切には正の整数値を入れてください．";
+							$ERROR[] = '<li class="list-group-item list-group-item-danger">本当の〆切には正の整数値を入れてください．</li>';
 						}else{
 							$harddead = $softdead + (intval($_REQUEST["deadline_"]) * 60 * 60);
 						}
 					}else{
-						$ERROR[] = "本当の〆切には正の整数値を入れてください。";
+						$ERROR[] = '<li class="list-group-item list-group-item-danger">本当の〆切には正の整数値を入れてください。</li>';
 					}
 				}else{
-					$ERROR[] = "本当の〆切が記入されていません。";
+					$ERROR[] = '<li class="list-group-item list-group-item-danger">本当の〆切が記入されていません。</li>';
 				}
 				if(count($ERROR) != 0){
-					echo '<h2 style="color:red;">[失敗]アンケートは作成されませんでした</h2>';
-					echo implode("<br/>",$ERROR);
+?>
+<div class="alert alert-danger" role="alert">
+<h4 class="alert-heading">[失敗]アンケートは作成されませんでした</h4>
+</div>
+<ul class="list-group">
+<?php
+					echo implode("\n",$ERROR);
+?>
+</ul>
+<p>ブラウザの戻るボタンを使って、エラーを修正してください。</p>
+<?php
+					echo "</div>";
 					exit(0);
 				}
 				//アンケート生成
@@ -478,37 +574,56 @@ if(!isset($_REQUEST["u"])){
 				rewind($fp);
 				$mems = array();
 				$c = 0;
-				echo "<h2>ご確認ください</h2><table border=1>";
+?>
+<h2>ご確認ください</h2>
+<table  class="table table-striped">
+<thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">名前</th>
+      <th scope="col">メールアドレス</th>
+    </tr>
+</thead>
+<tbody>
+<?php
 				while($line = fgetcsv($fp)) {
 					array_push($mems,md5(uniqid()).",".$line[0].",".$line[1]."\n");
-					echo "<tr><td>".(++$c)."</td><td>".$line[0]."</td><td>".$line[1]."</td></tr>";
+					echo '<tr><th scope="row">'.(++$c).'</th><td>'.$line[0].'</td><td>'.$line[1].'</td></tr>';
 				}
-				echo "</table>";
+?>
+</tbody>
+</table>
+<?php
 				fclose($fp);
 				file_put_contents($DIR.$FILE["source"],implode("",$mems));
-				
-				echo "アンケート生成完了!<br/>";
+?>
+<div class="alert alert-primary" role="alert">
+<strong>※アンケート生成完了!</strong>
+</div>
+<?php
 				//例文作成
 				$members = file($DIR.$FILE["source"]);
 				list($id,$name,$mailto) = explode(",",$members[0]);
 				$mailto = trim($mailto);
 				$mail = getMailBody($name,file_get_contents($DIR.$FILE["mail"]),file($DIR.$FILE["choice"]),$URL,$id, file_get_contents($DIR.$FILE["sign"]));
 ?>
-
+<hr class="my-4">
 <form action="<?=$URL?>" method="POST">
-<h1>アンケートを作り直す</h1>
+<h3>アンケートを作り直す</h3>
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
-<input type="submit" name="mode" value="delete" style="font-size:36px;padding-left:80px;padding-right:80px;"><br />
+<input type="submit" name="mode" value="delete" class="btn btn-outline-success btn-lg">
 </form>
-
+<hr class="my-4">
 <form action="<?=$URL?>" method="POST">
-<h1>アンケート送信</h1>
-<input type="submit" name="mode" value="send" style="font-size:36px;padding-left:80px;padding-right:80px;"><br/>
+<h3>アンケート送信</h3>
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
+<input type="submit" name="mode" value="send" class="btn btn-outline-danger btn-lg">
 </form>
-<hr/>
+<hr class="my-4">
+<h3>メール文面プレビュー</h3>
+<pre style="background:#37474F;color:#ECEFF1;padding:10px;"><?=$mail?></pre>
+</div>a
 <?php
-				echo "<pre style=\"width:500px;padding:10px;background-color:#ddd;\">".$mail."</pre>";
 			}elseif($_REQUEST["mode"] == "add"){
 				list($SENDER,$MAIL,$KANJI) = explode("*",file_get_contents($DIR.$FILE["mail_from"]),3);
 				$MAILHEADER = mb_encode_mimeheader (mb_convert_encoding($KANJI,"ISO-2022-JP","AUTO")).
@@ -540,12 +655,28 @@ if(!isset($_REQUEST["u"])){
 						unlink($DIR.$file);
 					}
 				}
-				echo '<h1>アンケート削除完了！</h1><p><a href="'.$URL.'?admin='.$PASSWORD.'">新規アンケート作成画面</a>へ</p>';
+?>
+<div class="container">
+<div class="jumbotron">
+  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+  <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+</div>
+<div class="alert alert-info" role="alert">
+<strong>アンケート削除完了！</strong>　続けて新しいアンケートを作成する場合は<a class="alert-link" href="<?=$URL?>?admin=<?=$PASSWORD?>">こちら</a>から。
+</div>
+<?php
 			}elseif($_REQUEST["mode"] == "send"){
 				//vote送信
+?>
+<div class="container">
+<div class="jumbotron">
+  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+  <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+</div>
+<h2>アンケート送信！</h2>
+<?php
 				list($SENDER,$MAIL,$KANJI) = explode("*",file_get_contents($DIR.$FILE["mail_from"]),3);
 				$MAILHEADER = mb_encode_mimeheader (mb_convert_encoding($KANJI,"ISO-2022-JP","AUTO"))."<".$MAIL.">";
-				echo "<h1>アンケート送信！</h1>";
 				$members = file($DIR.$FILE["source"]);
 				$sent = array();
 				if(isset($_REQUEST["resend"])){
@@ -569,14 +700,19 @@ if(!isset($_REQUEST["u"])){
 					}
 					$mailto = trim($mailto);
 					$mail = getMailBody($name,$nakami,$choice,$URL,$id,$sign);
-					echo $name."様(".$mailto.")へ送信--";
+					echo $name."様(".$mailto.")へ送信";
 					//$r = mb_send_mail($mailto,$subject,$mail,$MAILHEADER,"-f".$SENDER);
                     $r = sendMail($mailto,$subject,$mail,$MAILHEADER,$SENDER);
-					echo $r?"[成功]<br/>":"[失敗]<br/>";
+					echo $r?'<span class="badge badge-pill badge-success">成功</span><br>':'<span class="badge badge-pill badge-danger">失敗</span><br>';
 				}
-				echo "<h1>管理・集計ページ</h1>";
-				echo "アンケートの管理・集計結果の閲覧は以下のページをご覧ください。<br/>";
-				echo '<a href="'.$URL.'?admin='.$_REQUEST["admin"].'">'.$URL.'?admin='.$_REQUEST["admin"].'</a>';
+?>
+<hr class="my-4">
+<h2>管理・集計ページ</h2>
+<p>アンケートの管理・集計結果の閲覧は以下のページをご覧ください。(ブックマークをしておくと便利です。)<br>
+<a href="<?=$URL?>?admin=<?=$_REQUEST["admin"]?>"><?=$URL?>?admin=<?=$_REQUEST["admin"]?></a>
+</p>
+</div>
+<?php
 			}
 		}
 	}else{
@@ -592,10 +728,24 @@ if(!isset($_REQUEST["u"])){
 	}
 	$choice = file($DIR.$FILE["choice"]);
 	if(!isset($members[$_REQUEST["u"]])){?>
-	<div style="overflow:auto;height:250px;width:400px;margin-left : auto ; margin-right : auto ;background-image:url(votebg.gif);">
-		<div style="text-align:center;margin:40px 40px 10px 40px;font-size:16px;">エラー</div>
-		<div style="text-align:justify;margin:30px 40px 20px 40px;font-size:16px;">　この投票URLは有効ではありません。既にアンケートは修了したか、もしくはURLの一部が欠損している可能性があります。メール内に記載されたURLをもう一度ご確認ください。</div>
-	</div>
+<div class="container">
+        <table style="height: 100vh;">
+            <tbody>
+                <tr>
+                    <td class="align-middle">
+                        <div class="alert alert alert-danger" role="alert">
+                            <h4 class="alert-heading">エラー</h4>
+                            <p>この投票URLは有効ではありません。既にアンケートは修了したか、もしくはURLの一部が欠損している可能性があります。メール内に記載されたURLをもう一度ご確認ください。</p>
+                            <hr>
+                            <p class="mb-0">ヒント：メールに記載されているURLが途中で改行されている場合等にこのエラーが出る場合があります。もしURLに予期せぬ改行が含まれている場合は、お手数ですがコピー&amp;ペーストで繋げて正しいURLにアクセスしてください。</p>
+                            <hr>
+                            <p class="mb-0 text-right small"><a href="https://github.com/abarth500/EnkaiSan" target="_blank">宴会さん by Shohei Yokoyama</a></p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 <?php		exit;
 	}
 	if(!isset($_REQUEST["v"])){
@@ -630,32 +780,67 @@ if(!isset($_REQUEST["u"])){
 		if(time() > intval($deadline)){
 			//期限切れ
 			?>
-	<div style="overflow:auto;height:250px;width:400px;margin-left : auto ; margin-right : auto ;background-image:url(votebg.gif);">
-		<div style="text-align:center;margin:40px 40px 10px 40px;font-size:16px;"><?=$NAME?>　様</div>
-		<div style="text-align:justify;margin:30px 40px 20px 40px;font-size:16px;">　本アンケートの回答は締め切られました。回答の変更等は直接[<a href="mailto:<? echo $MAIL; ?>"><? echo $KANJI; ?></a>]へご連絡ください。</div>
-		<div style="color:<?=$COL[$CONFIG['color']]?>;text-align:center;margin:10px 40px 10px 40px;font-size:16px;">期限：<? echo date("Y年m月d日",$d) ?></div>
-	</div>
+	<div class="container">
+        <table style="height: 100vh;">
+            <tbody>
+                <tr>
+                    <td class="align-middle">
+                        <div class="alert alert alert-danger" role="alert">
+                            <h4 class="alert-heading">期限切れ</h4>
+                            <p><strong><?=$NAME?></strong>様。本アンケートの回答は締め切られました。 [期限:<?php echo date("Y年m月d日",$d);?>]</p>
+                            <hr>
+                            <p class="mb-0">回答の変更等は直接メールにて[<a href="mailto:<? echo $MAIL; ?>"><? echo $KANJI; ?></a>]へご連絡ください。</p>
+                            <hr>
+                            <p class="mb-0 text-right small"><a href="https://github.com/abarth500/EnkaiSan" target="_blank">宴会さん by Shohei Yokoyama</a></p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 <?php			exit;
 		}
 		$NAME=$members[$_REQUEST["u"]];
 		$ID  = $_REQUEST["u"];
 		$VALUE= $_REQUEST["v"];
 		$CHOICE = trim($choice[$_REQUEST["v"]]); ?>
-	<div style="overflow:auto;height:250px;width:400px;position:absolute;top:50%;left:50%;margin-top:-125px;margin-left:-200px;background-image:url(votebg.gif);">
-		<div style="text-align:center;margin:40px 40px 10px 40px;font-size:16px;"><?=$NAME?>　様</div>
-		<div style="text-align:justify;margin:30px 40px 20px 40px;font-size:16px;">　アンケートへのご協力ありがとうございました。下記のご回答承りました。</div>
-		<div style="color:<?=$COL[$CONFIG['color']]?>;text-align:center;margin:10px 40px 10px 40px;font-size:16px;"><?=$CHOICE?></div>
-<?php
-		if(file_exists($DIR.$FILE["pub_total"])){
-?>		<div style="text-align:center;margin:20px 40px 10px 40px;font-size:16px;">[<a href="<?=$URL?>?u=<?=$ID?>">集計結果を見る</a>]</div>
-<?php
-		}
-?>
-	</div>
+	<div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answerModalLabel">
+                            <?=$NAME?>様の現在の登録情報</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                </div>
+                <div class="modal-body">
+                    <h3 class="text-center"><span class="badge badge-primary"><?=$CHOICE?></span></h3>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php
 		file_put_contents($DIR.$FILE["result"], $ID.",".microtime (true).",".$NAME.",".$VALUE.",".$CHOICE."\n", FILE_APPEND | LOCK_EX);
 	}
 }
 ?>
+<div class="fixed-bottom text-right">
+        <a class="btn btn-outline-secondary btn-sm" href="https://github.com/abarth500/EnkaiSan" target="_blank">宴会さん by Shohei Yokoyama</a>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+<script>
+	$(document).ready(function() {
+		if ($('#answerModal')[0]) {
+			$('#answerModal').modal('show');
+		}
+	});
+</script>
 </body>
 </html>
