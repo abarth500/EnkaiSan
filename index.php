@@ -9,6 +9,7 @@ mb_language("ja");
 mb_internal_encoding("UTF-8");
 mb_http_output( "UTF-8" );
 setlocale(LC_ALL, 'ja_JP.UTF-8');
+date_default_timezone_set('Asia/Tokyo');
 
 //以下、必要に応じて設定してください。==========================
 //このPHPプログラムのURL
@@ -22,7 +23,7 @@ $URL = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS']!="off")?"https://":"http
 //  -個人情報の為、必ずWeb非公開に
 //  -最後のスラッシュ忘れずに
 //  -このPHPプログラムからrw権限必須
-$DIR = "vote/";
+$DIR = dirname(__FILE__) . DIRECTORY_SEPARATOR."vote".DIRECTORY_SEPARATOR;
 
 //管理者パスワード
 //  -URLに含む事のできる文字のみ
@@ -209,6 +210,46 @@ function names ($results,$items){
 }
 
 function printTotal($totals,$results){
+	global $COL,$lCOL,$CONFIG;
+	$c = 0;
+	echo '<div class="row">';
+	foreach($totals as $total){
+		list($mode,$title,$item) = explode("|",$total);
+		if($mode == "-"){
+			//if($c != 0){
+			//	echo "<br style=\"clear:both;\" />";
+			//}
+			echo '<div class="w-100"></div>';
+			if($title!=""){
+				echo '<div class="col-12"><h2>'.$title."</h2></div>";
+			}
+			continue;
+		}
+		$c++;
+		$items = explode(",",trim($item));
+		echo '<div class="col">';
+		echo '<div class="container" style="background-color:'.$COL[$CONFIG['color']].';">';
+		echo '<div class="row">';
+		echo '<div class="col-12 text-white text-center"><h3>'.$title.'</h3></div>';
+		echo '<div class="col-12 text-white text-center"><h4>'.sumup($results,$items).'人</h4></div>';
+		$color=array("#fff",$lCOL[$CONFIG['color']],$lCOL[$CONFIG['color']],"#fff");
+		$co = 0;
+		if($mode == "*"){
+			$names = names($results,$items);
+			foreach($names as $name){
+				//echo '<div class="col-md-6" style="background-color:'.$color[$co++%4].';">'.$name.'</div>';
+				echo '<span class="col-md-6 badge badge-pill badge-light" style="background-color:'.$color[$co++%4].';">'.$name.'</span>';
+			}
+		}
+		echo "</div>";
+		echo '<div class="col-12">&nbsp;</div>';
+		echo "</div>";
+		echo "</div>";
+	}
+	echo '</div>';
+}
+
+function printTotal_($totals,$results){
     global $COL,$lCOL,$CONFIG;
 	$c = 0;
 	foreach($totals as $total){
@@ -268,8 +309,8 @@ if(!isset($_REQUEST["u"])){
 			if(!file_exists($DIR.$FILE["result"])){
 ?>
 <div class="container">
-<div class="jumbotron">
-  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+  <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
   <hr class="my-4">
 	<p class="lead">
@@ -333,7 +374,7 @@ if(!isset($_REQUEST["u"])){
 <hr class="my-4">
 <h3>集計項目</h3>
 <div class="form-check">
-    <input type="checkbox" class="form-check-input" name="public" id="labelChecked" checked>
+    <input type="checkbox" class="form-check-input" name="public" id="labelChecked" value="checked" checked>
     <label class="form-check-label" for="labelChecked">集計結果を回答者にも公開する。</label>
 </div>
 <div class="form-group">    
@@ -410,26 +451,73 @@ if(!isset($_REQUEST["u"])){
 <?php
 			}else{
 ?>
-<h1 style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">管理メニュー</h1>
-<h2 style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート送付先追加</h2>
+<div class="container">
+<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+  <h1 class="display-4"><?=$CONFIG['title']?></h1>
+  <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+</div>
+<h1 _style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">管理メニュー</h1>
+<h2 _style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート送付先追加</h2>
 <form action="<?=$URL?>" method="POST">
-メールアドレス<input type="text" name="mail" size="70" /><br/>
-氏名<input type="text" name="name" size="70" /><br/>
-<input type="checkbox" name="now" value="checked" checked>今すぐメールを送信する</input><br/>
-<input type="submit" name="mode" value="add" style="font-size:36px;padding-left:80px;padding-right:80px;"><br />
+<div class="form-group row">
+    <label for="mail" class="col-sm-2 col-form-label">メールアドレス</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" name="mail" id="mail" placeholder="Email">
+    </div>
+</div>
+<div class="form-group row">
+    <label for="name" class="col-sm-2 col-form-label">氏名</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-sm-2">確認</div>
+    <div class="col-sm-10">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="now" name="now" value="checked" checked>
+        <label class="form-check-label" for="now">
+		今すぐメールを送信する
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-10">
+	<input type="submit" class="btn btn-primary" name="mode" value="add">
+    </div>
+  </div>
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
 </form>
-<h2 style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート再送(未報告者のみ)</h2>
+<hr>
+<h2>アンケート再送(未報告者のみ)</h2>
 <form action="<?=$URL?>" method="POST">
-<input type="submit" name="mode" value="send" style="font-size:36px;padding-left:80px;padding-right:80px;"><br />
+<div class="form-group row">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-10">
+	<input type="submit" class="btn btn-primary" name="mode" value="send">
+    </div>
+  </div>
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
 <input type="hidden" name="resend" value="true">
 </form>
-<h2 style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート初期化</h2>
+<hr>
+<h2>アンケート初期化</h2>
 <form action="<?=$URL?>" method="POST">
-管理者パスワード:<input type="text" name="admin"/><br/>
-<input type="submit" name="mode" value="delete" style="font-size:36px;padding-left:80px;padding-right:80px;"><br />
-※アンケート結果も全て消去されます。
+<div class="form-group row">
+    <label for="admin" class="col-sm-2 col-form-label">管理者パスワード</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="admin" id="admin" placeholder="Password">
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-10">
+	<input type="submit" class="btn btn-primary" name="mode" value="delete"><small>※アンケート結果も全て消去されます。</small>
+    </div>
+  </div>
+
 </form>
 <h1 style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">集計結果</h1>
 <?php
@@ -464,8 +552,8 @@ if(!isset($_REQUEST["u"])){
 				//vote作成
 ?>
 <div class="container">
-<div class="jumbotron">
-  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+  <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
 <?php
@@ -526,6 +614,7 @@ if(!isset($_REQUEST["u"])){
 				}
 				if(count($ERROR) != 0){
 ?>
+</div>
 <div class="alert alert-danger" role="alert">
 <h4 class="alert-heading">[失敗]アンケートは作成されませんでした</h4>
 </div>
@@ -657,8 +746,8 @@ if(!isset($_REQUEST["u"])){
 				}
 ?>
 <div class="container">
-<div class="jumbotron">
-  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+  <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
 <div class="alert alert-info" role="alert">
@@ -669,8 +758,8 @@ if(!isset($_REQUEST["u"])){
 				//vote送信
 ?>
 <div class="container">
-<div class="jumbotron">
-  <h1 class="display-4"><?=$CONFIG['title']?> - 宴会さん</h1>
+<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+  <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
 <h2>アンケート送信！</h2>
@@ -762,15 +851,38 @@ if(!isset($_REQUEST["u"])){
 			}
 		}
 		?>
-	<div style="overflow:auto;height:250px;width:400px;margin-left : auto ; margin-right : auto ;background-image:url(votebg.gif);">
-		<div style="text-align:center;margin:40px 40px 10px 40px;font-size:16px;"><?=$NAME?>　様</div>
-		<div style="text-align:justify;margin:30px 40px 20px 40px;font-size:16px;">　現在の登録状況は以下のようになっております。登録内容を修正する場合はアンケートメールのURLをクリックしてください。</div>
-		<div style="color:<?=$COL[$CONFIG['color']]?>;text-align:center;margin:10px 40px 10px 40px;font-size:16px;"><?=$NOTE?></div>
-	</div>
+	<div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answerModalLabel">
+                            <?=$NAME?>様の現在の登録情報</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                </div>
+                <div class="modal-body">
+                    <h3 class="text-center"><span class="badge badge-primary"><?=$NOTE?></span></h3>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php
 		if(file_exists($DIR.$FILE["pub_total"])){
-			echo '<h1 style="border-top: inset 10px <?=$COL[$CONFIG[\'color\']]?>;">集計結果</h1>';
+			/*echo '<h1 style="border-top: inset 10px <?=$COL[$CONFIG[\'color\']]?>;">集計結果</h1>';*/
+			?>
+			<div class="container">
+			<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+  					<h1 class="display-4"><?=$CONFIG['title']?></h1>
+  					<p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+				</div>
+			<?php
 			printTotal(file($DIR.$FILE["pub_total"]),$results);
+			echo '</div>';
 		}
 	}else{
 		//投票モード
@@ -798,23 +910,26 @@ if(!isset($_REQUEST["u"])){
             </tbody>
         </table>
     </div>
-<?php			exit;
+	
+<?php			
 		}
 		$NAME=$members[$_REQUEST["u"]];
 		$ID  = $_REQUEST["u"];
 		$VALUE= $_REQUEST["v"];
-		$CHOICE = trim($choice[$_REQUEST["v"]]); ?>
+		$CHOICE = trim($choice[$_REQUEST["v"]]); 
+	?>
 	<div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="answerModalLabel">
-                            <?=$NAME?>様の現在の登録情報</h5>
+                            <?=$NAME?>様</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
                 </div>
                 <div class="modal-body">
+					<p>アンケートへの回答誠にありがとうございます。以下の回答を承りました。</p>
                     <h3 class="text-center"><span class="badge badge-primary"><?=$CHOICE?></span></h3>
                 </div>
 
@@ -825,6 +940,19 @@ if(!isset($_REQUEST["u"])){
         </div>
     </div>
 <?php
+		if(file_exists($DIR.$FILE["pub_total"])){
+			/*echo '<h1 style="border-top: inset 10px <?=$COL[$CONFIG[\'color\']]?>;">集計結果</h1>';*/
+			?>
+			<div class="container">
+			<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+  					<h1 class="display-4"><?=$CONFIG['title']?></h1>
+  					<p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+				</div>
+			<?php
+			echo '<div class="container">';
+			printTotal(file($DIR.$FILE["pub_total"]),$results);
+			echo '</div>';
+		}
 		file_put_contents($DIR.$FILE["result"], $ID.",".microtime (true).",".$NAME.",".$VALUE.",".$CHOICE."\n", FILE_APPEND | LOCK_EX);
 	}
 }
