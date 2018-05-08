@@ -102,7 +102,7 @@ sudo certbot --apache
 
 いくつか質問が出てきますので答えましょう。メールアドレスは貴方のメールアドレスを入れれば良いでしょう。Apacheで定義されたHost NameおよびVirtual Host Nameの一覧が出てきますので、宴会さんで使うHost Nameを選びましょう。カンマで繋げて複数を選ぶ事も出来ますし、ワイルドカードを使う事も出来ます。成功すると、Apacheに取得したCertが設定されます。configも自動で差し替えらます。```/etc/httpd/conf.d/enkaisan-le-ssl.conf```というファイルが追加されているでしょう。手順が簡単すぎて不安な場合は、以下のコマンドで設定内容を確認できます。
 
-```bach
+```bash
 less /etc/httpd/conf.d/enkaisan-le-ssl.conf
 ```
 

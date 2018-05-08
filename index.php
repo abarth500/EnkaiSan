@@ -64,7 +64,7 @@ if (php_sapi_name() == 'cli') {
     if ($PASSWORD == "") {
         $PASSWORD = uniqid();
     }
-    $rtn = file_put_contents($DIR . '.password', $PASSWORD);
+    $rtn = file_put_contents($DIR . '.password', crypt($PASSWORD));
     //--
     echo "\t->set:\t" . ($rtn ? 'true' : 'false') . "\n";
     echo "\n";
@@ -292,7 +292,8 @@ function getCurrentResult($NAME)
 <body>
 <?php
 if (!isset($_REQUEST["u"])) {
-    if (isset($_REQUEST["admin"]) and $PASSWORD == $_REQUEST["admin"]) {
+    if (isset($_REQUEST["admin"]) and $PASSWORD == crypt($_REQUEST["admin"],$PASSWORD)) {
+        $PASSWORD = $_REQUEST["admin"];
         if (!isset($_REQUEST["mode"])) {
             //管理画面
             if (!file_exists($DIR . $FILE["result"])) {
