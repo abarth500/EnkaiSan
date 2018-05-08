@@ -30,7 +30,11 @@ $ cat <<EOF | sudo tee /etc/httpd/conf.d/enkaisan.conf
   </Directory>
 </VirtualHost>
 $ systemctl restart httpd
-$ git --depth 1 https://github.com/abarth500/EnkaiSan.git
+```
+次にGitHubから宴会さんのプログラムをダウンロードして展開します。
+
+```bash
+$ git clone --depth 1 https://github.com/abarth500/EnkaiSan.git
 $ cp -r EnkaiSan/* .
 ```
 これで、インストールとApacheの設定が出来ました。指定したURLにアクセスして```HELLO WORLD```と表示されれば成功です。また```/vote/.htaccess```にアクセスしてファイルが表示されない事を確認してください。この```vote```フォルダがWebに公開されていると、ニュースとかを良く騒がせる、いわゆる「個人情報がWebでだれでも見られる状態になったいた」という事になりますので、必ず確認してください。尚、上記のコマンドが正しく実行されて居れば、```vote```フォルダへのアクセスは拒否されます。
@@ -39,3 +43,31 @@ $ cp -r EnkaiSan/* .
 ```bash
 $ php index.php
 ```
+色々と初期設定に必要な質問が出てきますので答えてください。
+```bash
+Admin Password:                 (default=uniqid())
+>
+```
+宴会さん管理者のパスワードです。このパスワードを知っている人だけが、アンケートの作成・送付・集計を行えます。何も入力せずにEnterを押すとランダムな文字列が生成されてパスワードとなります。
+
+```bash
+Envelope From Address:
+>
+```
+Envelope Fromとして設定するアドレスを入力してください。スパム判定される可能性を少なくするには、このPHPプログラムがあるサーバが持っているメールアドレスを設定してください。また、DNSでSPFレコードに登録する事も検討してください。尚、ここの設定とは別に、アンケート作成時にFrom(送信者)アドレスが指定できます。
+
+```bash
+Username of Web Server:         (default=apache)
+>
+```
+
+```bash
+Key color of your service               (default=Indigo)
+        Red     Pink    Purple  DeepPurple
+        Indigo  Blue    LightBlue       Cyan
+        Teal    Green   LightGreen      Lime
+        Yellow  Amber   Orange  DeepOrange
+        Brown   Grey    BlueGrey
+> 
+```
+設定項目はこれで完了です。

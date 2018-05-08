@@ -35,6 +35,29 @@ if (!is_writable($DIR)) {
     exit;
 }
 
+$COLOR = array(
+    "Red" => array("dark"=>"#f44336","light"=>"#ffcdd2"),
+    "Pink" => array("dark"=>"#E91E63","light"=>"#F8BBD0"),
+    "Purple" => array("dark"=>"#9C27B0","light"=>"#E1BEE7"),
+    "DeepPurple" => array("dark"=>"#673AB7","light"=>"#D1C4E9"),
+    "Indigo" => array("dark"=>"#3F51B5","light"=>"#C5CAE9"),
+    "Blue" => array("dark"=>"#2196F3","light"=>"#BBDEFB"),
+    "LightBlue" => array("dark"=>"#03A9F4","light"=>"#B3E5FC"),
+    "Cyan" => array("dark"=>"#00BCD4","light"=>"#B2EBF2"),
+    "Teal" => array("dark"=>"#009688","light"=>"#B2DFDB"),
+    "Green" => array("dark"=>"#4CAF50","light"=>"#C8E6C9"),
+    "LightGreen" => array("dark"=>"#8BC34A","light"=>"#DCEDC8"),
+    "Lime" => array("dark"=>"#CDDC39","light"=>"#F0F4C3"),
+    "Yellow" => array("dark"=>"#FFEB3B","light"=>"#FFF9C4"),
+    "Amber" => array("dark"=>"#FFC107","light"=>"#FFECB3"),
+    "Orange" => array("dark"=>"#FF9800","light"=>"#FFE0B2"),
+    "DeepOrange" => array("dark"=>"#FF5722","light"=>"#FFCCBC"),
+    "Brown" => array("dark"=>"#795548","light"=>"#D7CCC8"),
+    "Grey" => array("dark"=>"#9E9E9E","light"=>"#E0E0E0"),
+    "BlueGrey" => array("dark"=>"#607D8B","light"=>"#CFD8DC")
+);
+
+
 if (php_sapi_name() == 'cli') {
     //--
     echo "Admin Password:        \t\t(default=uniqid())\n> ";
@@ -72,18 +95,28 @@ if (php_sapi_name() == 'cli') {
         if (!$init) {
             echo "[ERROR]===Wrong color. Choose one of the following list.===\n";
         }
-        echo "Key color of your service\t\t(default=" . $CONFIG['color'] . ")\n";
-        echo "\tRed\tPink\tPurple\tDeepPurple\n";
-        echo "\tIndigo\tBlue\tLightBlue\tCyan\n";
-        echo "\tTeal\tGreen\tLightGreen\tLime\n";
-        echo "\tYellow\tAmber\tOrange\tDeepOrange\n";
-        echo "\tBrown\tGrey\tBlueGrey\n> ";
+        echo "Key color of your service\t\t(default=" . $CONFIG['color'] . ")\n\t";
+        $colors = array_keys($COLOR);
+        $width = 0;
+        foreach($colors as $color){
+            $width = max($width,strlen($color));
+        }
+        $width += 4;
+        $format = '%-'.$width.'s';
+        $c = 0;
+        foreach($colors as $color){
+            if(++$c % 4==0){
+                echo "\n\t";
+            }
+            sprintf($format, $color);
+        }
+        echo "\n>";
         $rtn = trim(fgets(STDIN));
         if ($rtn == "") {
             break;
         }
         $init = false;
-    } while (array_search($rtn, array_keys($COL)));
+    } while (!array_key_exists($rtn,$COLOR));
     if ($rtn != "") {
         $CONFIG['color'] = $rtn;
     }
@@ -116,50 +149,6 @@ if (php_sapi_name() == 'cli') {
 //===============================================================
 
 $FILE = array("source" => "member.csv", "subject" => "subject.txt", "mail_from" => "from.txt", "mail" => "mail.txt", "sign" => "sign.txt", "choice" => "choice.txt", "deadline" => "deadline.csv", "total" => "total.txt", "pub_total" => "pubtot.txt", "result" => "result.csv");
-
-$COL = array(
-    "Red" => "#f44336",
-    "Pink" => "#E91E63",
-    "Purple" => "#9C27B0",
-    "DeepPurple" => "#673AB7",
-    "Indigo" => "#3F51B5",
-    "Blue" => "#2196F3",
-    "LightBlue" => "#03A9F4",
-    "Cyan" => "#00BCD4",
-    "Teal" => "#009688",
-    "Green" => "#4CAF50",
-    "LightGreen" => "#8BC34A",
-    "Lime" => "#CDDC39",
-    "Yellow" => "#FFEB3B",
-    "Amber" => "#FFC107",
-    "Orange" => "#FF9800",
-    "DeepOrange" => "#FF5722",
-    "Brown" => "#795548",
-    "Grey" => "#9E9E9E",
-    "BlueGrey" => "#607D8B",
-);
-
-$lCOL = array(
-    "Red" => "#ffcdd2",
-    "Pink" => "#F8BBD0",
-    "Purple" => "#E1BEE7",
-    "DeepPurple" => "#D1C4E9",
-    "Indigo" => "#C5CAE9",
-    "Blue" => "#BBDEFB",
-    "LightBlue" => "#B3E5FC",
-    "Cyan" => "#B2EBF2",
-    "Teal" => "#B2DFDB",
-    "Green" => "#C8E6C9",
-    "LightGreen" => "#DCEDC8",
-    "Lime" => "#F0F4C3",
-    "Yellow" => "#FFF9C4",
-    "Amber" => "#FFECB3",
-    "Orange" => "#FFE0B2",
-    "DeepOrange" => "#FFCCBC",
-    "Brown" => "#D7CCC8",
-    "Grey" => "#E0E0E0",
-    "BlueGrey" => "#CFD8DC",
-);
 
 $URL = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] != "off") ? "https://" : "http://") . $_SERVER["SERVER_NAME"] . $_SERVER["SCRIPT_NAME"];
 
@@ -209,7 +198,7 @@ function names($results, $items)
 
 function printTotal($totals, $results)
 {
-    global $COL, $lCOL, $CONFIG;
+    global $COLOR, $CONFIG;
     $c = 0;
     echo '<div class="row">';
     foreach ($totals as $total) {
@@ -227,11 +216,11 @@ function printTotal($totals, $results)
         $c++;
         $items = explode(",", trim($item));
         echo '<div class="col">';
-        echo '<div class="container" style="background-color:' . $COL[$CONFIG['color']] . ';">';
+        echo '<div class="container" style="background-color:' . $COLOR[$CONFIG['color']]['dark'] . ';">';
         echo '<div class="row">';
         echo '<div class="col-12 text-white text-center"><h3>' . $title . '</h3></div>';
         echo '<div class="col-12 text-white text-center"><h4>' . sumup($results, $items) . '人</h4></div>';
-        $color = array("#fff", $lCOL[$CONFIG['color']], $lCOL[$CONFIG['color']], "#fff");
+        $color = array("#fff", $COLOR[$CONFIG['color']]["light"], $COLOR[$CONFIG['color']]["light"], "#fff");
         $co = 0;
         if ($mode == "*") {
             $names = names($results, $items);
@@ -246,39 +235,6 @@ function printTotal($totals, $results)
         echo "</div>";
     }
     echo '</div>';
-}
-
-function printTotal_($totals, $results)
-{
-    global $COL, $lCOL, $CONFIG;
-    $c = 0;
-    foreach ($totals as $total) {
-        list($mode, $title, $item) = explode("|", $total);
-        if ($mode == "-") {
-            if ($c != 0) {
-                echo "<br style=\"clear:both;\" />";
-            }
-            if ($title != "") {
-                echo '<div style="margin-top:10px;font-size:x-large;border-top: inset 3px ' . $COL[$CONFIG['color']] . ';">' . $title . "</div>";
-            }
-            continue;
-        }
-        $c++;
-        $items = explode(",", trim($item));
-        echo '<div style="width:300px;float:left;margin:3px;padding:3px;background-color:' . $COL[$CONFIG['color']] . ';">';
-        echo '<div style="color:#fff;text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:' . $COL[$CONFIG['color']] . ';">' . $title . '</div>';
-        echo '<div style="color:#fff;text-align:center;white-space:nowrap;overflow:hidden;width:290px;padding:5px;float:left;background-color:' . $COL[$CONFIG['color']] . ';font-size:xx-large;">' . sumup($results, $items) . '人</div>';
-        $color = array("#fff", $lCOL[$CONFIG['color']], $lCOL[$CONFIG['color']], "#fff");
-        $co = 0;
-        if ($mode == "*") {
-            $names = names($results, $items);
-            foreach ($names as $name) {
-                echo '<div style="text-align:center;white-space:nowrap;overflow:hidden;width:140px;border-bottom:solid 1px #393e4f;border-right:solid 1px #393e4f;border-top:solid 1px #d7a98c;border-left:solid 1px #d7a98c;padding:4px;float:left;background-color:' . $color[$co++ % 4] . ';">' . $name . '</div>';
-            }
-        }
-        echo "</div>";
-    }
-    echo '<br style="clear:both;"/>';
 }
 
 function getMailBody($name, $nakami, $choice, $URL, $id, $sign)
@@ -310,7 +266,7 @@ if (!isset($_REQUEST["u"])) {
             if (!file_exists($DIR . $FILE["result"])) {
                 ?>
 <div class="container">
-<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
   <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
   <hr class="my-4">
@@ -453,12 +409,12 @@ if (!isset($_REQUEST["u"])) {
 } else {
                 ?>
 <div class="container">
-<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
   <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
-<h1 _style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">管理メニュー</h1>
-<h2 _style="border-left: inset 50px <?=$COL[$CONFIG['color']]?>;border-top: inset 1px <?=$COL[$CONFIG['color']]?>;">アンケート送付先追加</h2>
+<h1>管理メニュー</h1>
+<h2>アンケート送付先追加</h2>
 <form action="<?=$URL?>" method="POST">
 <div class="form-group row">
     <label for="mail" class="col-sm-2 col-form-label">メールアドレス</label>
@@ -520,7 +476,7 @@ if (!isset($_REQUEST["u"])) {
   </div>
 
 </form>
-<h1 style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">集計結果</h1>
+<h1>集計結果</h1>
 <?php
 $result = file($DIR . $FILE["result"]);
                 $results = array();
@@ -533,7 +489,7 @@ $result = file($DIR . $FILE["result"]);
                 } else {
                     printTotal(file($DIR . $FILE["total"]), $results);
                 }
-                ?><h1 style="border-top: inset 10px <?=$COL[$CONFIG['color']]?>;">全結果</h1>
+                ?><h1>全結果</h1>
 <?php
 if (count($results) == 0) {
                     echo "まだ登録がありません<br/>";
@@ -553,7 +509,7 @@ if (count($results) == 0) {
                 //vote作成
                 ?>
 <div class="container">
-<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
   <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
@@ -747,7 +703,7 @@ fclose($fp);
                 }
                 ?>
 <div class="container">
-<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
   <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
@@ -759,7 +715,7 @@ fclose($fp);
                 //vote送信
                 ?>
 <div class="container">
-<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
   <h1 class="display-4"><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
@@ -877,7 +833,7 @@ if (file_exists($DIR . $FILE["pub_total"])) {
             /*echo '<h1 style="border-top: inset 10px <?=$COL[$CONFIG[\'color\']]?>;">集計結果</h1>';*/
             ?>
 			<div class="container">
-			<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+			<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
   					<h1 class="display-4"><?=$CONFIG['title']?></h1>
   					<p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 				</div>
@@ -945,7 +901,7 @@ if (file_exists($DIR . $FILE["pub_total"])) {
             /*echo '<h1 style="border-top: inset 10px <?=$COL[$CONFIG[\'color\']]?>;">集計結果</h1>';*/
             ?>
 			<div class="container">
-			<div class="jumbotron text-white" style="background:<?=$COL[$CONFIG['color']]?>;">
+			<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
   					<h1 class="display-4"><?=$CONFIG['title']?></h1>
   					<p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 				</div>
