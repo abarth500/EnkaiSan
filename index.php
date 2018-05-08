@@ -1,6 +1,6 @@
 <?php
 //==============================================================
-//　静岡大学情報学部　Rapid Q & A システム　「宴会さん」
+//　Rapid Q & A システム　「宴会さん」
 //   - Shohei Yokoyama
 //==============================================================
 
@@ -26,37 +26,36 @@ if (file_exists($DIR . '.config')) {
 } else {
     $CONFIG = array(
         "title" => "Enkai San (Rapid QA Service)",
-		"color" => "Indigo",
+        "color" => "Indigo",
     );
 }
 
 if (!is_writable($DIR)) {
-	echo "[ERROR] ".$DIR." isn't writeable.";
+    echo "[ERROR] " . $DIR . " isn't writeable.";
     exit;
 }
 
 $COLOR = array(
-    "Red" => array("dark"=>"#f44336","light"=>"#ffcdd2"),
-    "Pink" => array("dark"=>"#E91E63","light"=>"#F8BBD0"),
-    "Purple" => array("dark"=>"#9C27B0","light"=>"#E1BEE7"),
-    "DeepPurple" => array("dark"=>"#673AB7","light"=>"#D1C4E9"),
-    "Indigo" => array("dark"=>"#3F51B5","light"=>"#C5CAE9"),
-    "Blue" => array("dark"=>"#2196F3","light"=>"#BBDEFB"),
-    "LightBlue" => array("dark"=>"#03A9F4","light"=>"#B3E5FC"),
-    "Cyan" => array("dark"=>"#00BCD4","light"=>"#B2EBF2"),
-    "Teal" => array("dark"=>"#009688","light"=>"#B2DFDB"),
-    "Green" => array("dark"=>"#4CAF50","light"=>"#C8E6C9"),
-    "LightGreen" => array("dark"=>"#8BC34A","light"=>"#DCEDC8"),
-    "Lime" => array("dark"=>"#CDDC39","light"=>"#F0F4C3"),
-    "Yellow" => array("dark"=>"#FFEB3B","light"=>"#FFF9C4"),
-    "Amber" => array("dark"=>"#FFC107","light"=>"#FFECB3"),
-    "Orange" => array("dark"=>"#FF9800","light"=>"#FFE0B2"),
-    "DeepOrange" => array("dark"=>"#FF5722","light"=>"#FFCCBC"),
-    "Brown" => array("dark"=>"#795548","light"=>"#D7CCC8"),
-    "Grey" => array("dark"=>"#9E9E9E","light"=>"#E0E0E0"),
-    "BlueGrey" => array("dark"=>"#607D8B","light"=>"#CFD8DC")
+    "Red" => array("dark" => "#f44336", "light" => "#ffcdd2"),
+    "Pink" => array("dark" => "#E91E63", "light" => "#F8BBD0"),
+    "Purple" => array("dark" => "#9C27B0", "light" => "#E1BEE7"),
+    "DeepPurple" => array("dark" => "#673AB7", "light" => "#D1C4E9"),
+    "Indigo" => array("dark" => "#3F51B5", "light" => "#C5CAE9"),
+    "Blue" => array("dark" => "#2196F3", "light" => "#BBDEFB"),
+    "LightBlue" => array("dark" => "#03A9F4", "light" => "#B3E5FC"),
+    "Cyan" => array("dark" => "#00BCD4", "light" => "#B2EBF2"),
+    "Teal" => array("dark" => "#009688", "light" => "#B2DFDB"),
+    "Green" => array("dark" => "#4CAF50", "light" => "#C8E6C9"),
+    "LightGreen" => array("dark" => "#8BC34A", "light" => "#DCEDC8"),
+    "Lime" => array("dark" => "#CDDC39", "light" => "#F0F4C3"),
+    "Yellow" => array("dark" => "#FFEB3B", "light" => "#FFF9C4"),
+    "Amber" => array("dark" => "#FFC107", "light" => "#FFECB3"),
+    "Orange" => array("dark" => "#FF9800", "light" => "#FFE0B2"),
+    "DeepOrange" => array("dark" => "#FF5722", "light" => "#FFCCBC"),
+    "Brown" => array("dark" => "#795548", "light" => "#D7CCC8"),
+    "Grey" => array("dark" => "#9E9E9E", "light" => "#E0E0E0"),
+    "BlueGrey" => array("dark" => "#607D8B", "light" => "#CFD8DC"),
 );
-
 
 if (php_sapi_name() == 'cli') {
     //--
@@ -98,17 +97,17 @@ if (php_sapi_name() == 'cli') {
         echo "Key color of your service\t\t(default=" . $CONFIG['color'] . ")\n\t";
         $colors = array_keys($COLOR);
         $width = 0;
-        foreach($colors as $color){
-            $width = max($width,strlen($color));
+        foreach ($colors as $color) {
+            $width = max($width, strlen($color));
         }
         $width += 4;
-        $format = '%-'.$width.'s';
+        $format = '%-' . $width . 's';
         $c = 0;
-        foreach($colors as $color){
-            if(++$c % 4==0){
+        foreach ($colors as $color) {
+            if ($c++ % 4 == 0) {
                 echo "\n\t";
             }
-            sprintf($format, $color);
+            printf($format, $color);
         }
         echo "\n>";
         $rtn = trim(fgets(STDIN));
@@ -116,7 +115,7 @@ if (php_sapi_name() == 'cli') {
             break;
         }
         $init = false;
-    } while (!array_key_exists($rtn,$COLOR));
+    } while (!array_key_exists($rtn, $COLOR));
     if ($rtn != "") {
         $CONFIG['color'] = $rtn;
     }
@@ -148,7 +147,7 @@ if (php_sapi_name() == 'cli') {
 }
 //===============================================================
 
-$FILE = array("source" => "member.csv", "subject" => "subject.txt", "mail_from" => "from.txt", "mail" => "mail.txt", "sign" => "sign.txt", "choice" => "choice.txt", "deadline" => "deadline.csv", "total" => "total.txt", "pub_total" => "pubtot.txt", "result" => "result.csv");
+$FILE = array("source" => "member.csv", "subject" => "subject.txt", "mail_from" => "from.txt", "mail" => "mail.txt", "sign" => "sign.txt", "choice" => "choice.txt", "deadline" => "deadline.csv", "total" => "total.txt", "pub_total" => "pubtot.txt", "result" => "result.csv", "event" => "event.txt");
 
 $URL = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] != "off") ? "https://" : "http://") . $_SERVER["SERVER_NAME"] . $_SERVER["SCRIPT_NAME"];
 
@@ -195,7 +194,6 @@ function names($results, $items)
     }
     return $names;
 }
-
 function printTotal($totals, $results)
 {
     global $COLOR, $CONFIG;
@@ -249,6 +247,40 @@ function getMailBody($name, $nakami, $choice, $URL, $id, $sign)
     $mail .= $sign;
     return $mail;
 }
+
+function printResults()
+{
+    global $DIR,$FILE;
+    $result = file($DIR . $FILE["result"]);
+    $results = array();
+    foreach ($result as $res) {
+        list($id, $time, $name, $choice, $note) = explode(",", $res);
+        $results[$id] = array("name" => $name, "choice" => $choice, "note" => trim($note));
+    }
+    if (count($results) == 0) {
+        echo "まだ登録がありません<br/>";
+    } else {
+        printTotal(file($DIR . $FILE["total"]), $results);
+    }
+    return $results;
+}
+
+function getCurrentResult($NAME)
+{
+    global $DIR,$FILE;
+    $NOTE = "まだご登録を頂いておりません。";
+    $result = file($DIR . $FILE["result"]);
+    $results = array();
+    foreach ($result as $res) {
+        list($id, $time, $name, $choice, $note) = explode(",", $res);
+        $results[$id] = array("name" => $name, "choice" => $choice, "note" => trim($note));
+        if ($NAME == $name) {
+            $NOTE = trim($note);
+        }
+    }
+    return $NOTE;
+}
+
 ?><!DOCTYPE html>
 <html>
 <head lang="ja">
@@ -278,6 +310,11 @@ if (!isset($_REQUEST["u"])) {
 <a name="formHead">
 <form enctype="multipart/form-data" action="<?=$URL?>" method="POST">
 <h2>アンケート作成</h2>
+<h3>イベントについて</h3>
+<div class="form-group">
+    <label for="inputEvent">イベント名</label>
+    <input type="text" name="event" class="form-control" id="inputEvent" placeholder="「教員親睦会 新任教員歓迎会 (〇月●日)」等イベント名を入力してください。">
+</div>
 <h3>メールヘッダ情報</h3>
 <div class="form-group">
     <label for="inputMail">メール件名</label>
@@ -323,7 +360,7 @@ if (!isset($_REQUEST["u"])) {
 <hr class="my-4">
 <h3>回答〆切(YYYY/MM/DD)</h3>
 <div class="form-group row">
-	<input type="text" class="form-control col-sm-4" name="deadline" size="50"  placeholder="2018/05/12">
+	<input type="text" class="form-control col-sm-4" name="deadline" size="50"  placeholder="「2018/05/12」形式で入力してください。">
 	<label class="col-sm-3 col-form-label"><p class="text-right">本当の〆切:＋</p></label>
 	<input type="text"  class="form-control col-sm-3" name="deadline_" size="5" value="9">
 	<label class="col-sm-2 col-form-label">時間後</label>
@@ -335,7 +372,7 @@ if (!isset($_REQUEST["u"])) {
     <label class="form-check-label" for="labelChecked">集計結果を回答者にも公開する。</label>
 </div>
 <div class="form-group">
-<textarea name="total" rows="4" cols="60"  class="form-control" wrap="hard" style="background-color:#ddd;">-|参加・不参加一覧|
+<textarea name="total" rows="4" cols="60"  class="form-control" wrap="hard">-|参加・不参加一覧|
 *|参加者数|0,1
 *|不参加数|2
 -|参加内訳|
@@ -343,7 +380,7 @@ if (!isset($_REQUEST["u"])) {
 +|遅刻|1</textarea>
 </div>
 <p class="text-right">
-<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalFormat">
+<button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#modalFormat">
 集計項目の記述フォーマットについて
 </button>
 </p>
@@ -368,7 +405,8 @@ if (!isset($_REQUEST["u"])) {
   </li>
   <li class="list-group-item">
   <h5>参加者リスト(名前と人数)</h3>
-  <p><b>*|</b>で始めると名簿を表示します。項目名と集計項目(カンマ区切りで複数設定可)を定義します。下記の例では、アンケート選択し0番目と1番目の項目選択者の合計を参加者と言う項目名で表示します。</p>
+  <p><b>*|</b>で始めると名簿を表示します。項目名と集計項目(カンマ区切りで複数設定可)を定義します。
+  下記の例では、アンケート選択肢0番目と1番目の項目（つまり1行目と2行目）を選択した人の人数と名簿を「参加者」という項目名で表示します。</p>
   <p>例<span class="badge badge-secondary">*|参加者数|0,1</span></p>
   </li>
   <li class="list-group-item">
@@ -377,6 +415,22 @@ if (!isset($_REQUEST["u"])) {
   <p>例<span class="badge badge-secondary">+|フル参加|0</span></p>
   </li>
 </ul>
+<h4>例示</h4>
+<p>バス送迎有りのケースで参加不参加のアンケートをとる例で設定を示します。往復共にバス送迎があるとして、選択肢は次のようになります。
+<div class="bg-info"><pre class="text-white"><code>参加する(往路のみバス利用)
+参加する(復路のみバス利用)
+参加する(往復共にバス利用)
+参加する(バスを利用しない)
+参加しない</code></pre></div>
+<p>その場合の集計は項目は次の様に設定すると良いでしょう。</p>
+<div><pre class="bg-info text-white"><code>-|参加・不参加一覧|
+*|参加者数|0,1,2,3
+*|不参加数|4
+-|バス搭乗人数|
++|往路|0,2
++|復路|1,2
+</code></pre></div>
+</p>
 </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -396,7 +450,7 @@ if (!isset($_REQUEST["u"])) {
 </div>
 <hr class="my-4">
 <div class="form-group">
-<button class="btn btn-outline-info" name="mode" value="create" type="submit" aria-describedby="helpSubmit">アンケート作成</button>
+<button class="btn btn-primary" name="mode" value="create" type="submit" aria-describedby="helpSubmit">アンケート作成</button>
 <small id="helpSubmit" class="form-text text-muted">
 ※確認画面が表示されます。(メールはまだ送信されません)
 </small>
@@ -478,18 +532,9 @@ if (!isset($_REQUEST["u"])) {
 </form>
 <h1>集計結果</h1>
 <?php
-$result = file($DIR . $FILE["result"]);
-                $results = array();
-                foreach ($result as $res) {
-                    list($id, $time, $name, $choice, $note) = explode(",", $res);
-                    $results[$id] = array("name" => $name, "choice" => $choice, "note" => trim($note));
-                }
-                if (count($results) == 0) {
-                    echo "まだ登録がありません<br/>";
-                } else {
-                    printTotal(file($DIR . $FILE["total"]), $results);
-                }
-                ?><h1>全結果</h1>
+$results = printResults();
+?>
+<h1>全結果</h1>
 <?php
 if (count($results) == 0) {
                     echo "まだ登録がありません<br/>";
@@ -526,6 +571,9 @@ if (count($results) == 0) {
                 if ($_FILES['mailtolist']['size'] <= 0 or $_FILES['mailtolist']['error'] != 0) {
                     $ERROR[] = '<li class="list-group-item list-group-item-danger">CVSファイルのアップロードに失敗しました。</li>';
 
+                }
+                if (!isset($_REQUEST["event"]) or $_REQUEST["event"] == "") {
+                    $ERROR[] = '<li class="list-group-item list-group-item-danger">イベント名が記入されていません。</li>';
                 }
                 if (!isset($_REQUEST["mail_from"]) or $_REQUEST["mail_from"] == "") {
                     $ERROR[] = '<li class="list-group-item list-group-item-danger">差出人メールアドレスが記入されていません。</li>';
@@ -593,6 +641,7 @@ echo "</div>";
                 file_put_contents($DIR . $FILE["subject"], $_REQUEST["mail_"]);
                 file_put_contents($DIR . $FILE["mail"], $_REQUEST["mail"]);
                 file_put_contents($DIR . $FILE["sign"], $_REQUEST["sign"]);
+                file_put_contents($DIR . $FILE["event"], $_REQUEST["event"]);
                 $choice = preg_replace("/(\r\n|\n|\r)/", "\n", $_REQUEST["choice"]);
                 file_put_contents($DIR . $FILE["choice"], $choice);
                 if (!isset($_REQUEST["total"]) or trim($_REQUEST["total"]) == "") {
@@ -663,7 +712,7 @@ fclose($fp);
 <form action="<?=$URL?>" method="POST">
 <h3>アンケート送信</h3>
 <input type="hidden" name="admin" value="<?=$_REQUEST["admin"]?>">
-<input type="submit" name="mode" value="send" class="btn btn-outline-danger btn-lg">
+<input type="submit" name="mode" value="send" class="btn btn-outline-primary btn-lg">
 </form>
 <hr class="my-4">
 <h3>メール文面プレビュー</h3>
@@ -797,16 +846,7 @@ list($SENDER, $MAIL, $KANJI) = explode("*", file_get_contents($DIR . $FILE["mail
     if (!isset($_REQUEST["v"])) {
         //結果一覧モード
         $NAME = $members[$_REQUEST["u"]];
-        $NOTE = "まだご登録頂いておりません。";
-        $result = file($DIR . $FILE["result"]);
-        $results = array();
-        foreach ($result as $res) {
-            list($id, $time, $name, $choice, $note) = explode(",", $res);
-            $results[$id] = array("name" => $name, "choice" => $choice, "note" => trim($note));
-            if ($NAME == $name) {
-                $NOTE = trim($note);
-            }
-        }
+        $NOTE = getCurrentResult($NAME);
         ?>
 	<div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModal">
         <div class="modal-dialog" role="document">
@@ -834,11 +874,11 @@ if (file_exists($DIR . $FILE["pub_total"])) {
             ?>
 			<div class="container">
 			<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
-  					<h1 class="display-4"><?=$CONFIG['title']?></h1>
-  					<p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+  					<h1 class="display-4"><?=file_get_contents($DIR . $FILE["event"])?></h1>
+  					<p class="lead">上記のイベントに関するアンケートの集計結果です。</p>
 				</div>
 			<?php
-printTotal(file($DIR . $FILE["pub_total"]), $results);
+            printResults();
             echo '</div>';
         }
     } else {
@@ -897,20 +937,21 @@ printTotal(file($DIR . $FILE["pub_total"]), $results);
         </div>
     </div>
 <?php
+
+file_put_contents($DIR . $FILE["result"], $ID . "," . microtime(true) . "," . $NAME . "," . $VALUE . "," . $CHOICE . "\n", FILE_APPEND | LOCK_EX);
 if (file_exists($DIR . $FILE["pub_total"])) {
             /*echo '<h1 style="border-top: inset 10px <?=$COL[$CONFIG[\'color\']]?>;">集計結果</h1>';*/
             ?>
 			<div class="container">
 			<div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
-  					<h1 class="display-4"><?=$CONFIG['title']?></h1>
-  					<p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
+  					<h1 class="display-4"><?=file_get_contents($DIR . $FILE["event"])?></h1>
+  					<p class="lead">上記のイベントに関するアンケートの集計結果です。</p>
 				</div>
 			<?php
 echo '<div class="container">';
-            printTotal(file($DIR . $FILE["pub_total"]), $results);
+            printResults();
             echo '</div>';
         }
-        file_put_contents($DIR . $FILE["result"], $ID . "," . microtime(true) . "," . $NAME . "," . $VALUE . "," . $CHOICE . "\n", FILE_APPEND | LOCK_EX);
     }
 }
 ?>
