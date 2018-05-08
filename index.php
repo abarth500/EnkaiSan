@@ -514,7 +514,7 @@ if(!isset($_REQUEST["u"])){
 <div class="form-group row">
     <div class="col-sm-2">&nbsp;</div>
     <div class="col-sm-10">
-	<input type="submit" class="btn btn-denger" name="mode" value="delete"><small>※アンケート結果も全て消去されます。</small>
+	<input type="submit" class="btn btn-danger" name="mode" value="delete"><small>※アンケート結果も全て消去されます。</small>
     </div>
   </div>
 
