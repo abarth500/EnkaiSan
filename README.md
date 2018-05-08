@@ -86,3 +86,26 @@ Key color of your service               (default=Indigo)
 ## 新規アンケート作成
 
 Webブラウザで管理者ページを開きます。上記の例では```https://enkai.yokoyama.ac/index.php?admin=yourPassword```が管理者ページのURLになります。
+
+# オプション：https対応
+
+ここまでの設定で十分に動作しますが、https対応もしておきましょう。 [Let's Encrypt](https://letsencrypt.org/)で無料のCertを手に入れましょう。やり方は簡単です。まずCertbotをインストールします。
+
+```bash
+sudo yum install certbot-apache
+```
+
+次にCertbotを起動します。
+```bash
+sudo certbot --apache
+```
+
+いくつか質問が出てきますので答えましょう。メールアドレスは貴方のメールアドレスを入れれば良いでしょう。Apacheで定義されたHost NameおよびVirtual Host Nameの一覧が出てきますので、宴会さんで使うHost Nameを選びましょう。カンマで繋げて複数を選ぶ事も出来ますし、ワイルドカードを使う事も出来ます。成功すると、Apacheに取得したCertが設定されます。configも自動で差し替えらます。```/etc/httpd/conf.d/enkaisan-le-ssl.conf```というファイルが追加されているでしょう。手順が簡単すぎて不安な場合は、以下のコマンドで設定内容を確認できます。
+
+```bach
+less /etc/httpd/conf.d/enkaisan-le-ssl.conf
+```
+
+尚、Fedora/CentOSおよびApacheを使う事を前提で説明していますが、他の環境でもSSL対応は簡単です。以下のページを参考にしてください。
+
+https://certbot.eff.org/
