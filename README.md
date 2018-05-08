@@ -1,5 +1,7 @@
 # 概要
 
+宴会の出欠調査アンケートの為に開発されたシステムです。CSVで参加対象者のメールアドレスリストを登録する事で、簡単にメールによる出欠の調査ができます。参加者はメールに書かれたURLをクリックするだけで、参加／不参加を報告できます。Webブラウザ上での面倒な操作は必要ありません。
+
 # 導入
 ## 環境構築
 サーバには事前にHTTPd、SMTP、PHPと、それらに関連したライブラリがインストールされている必要があります。以下、Fedora/CentOSのコマンド例です。
@@ -61,13 +63,26 @@ Username of Web Server:         (default=apache)
 >
 ```
 
+Webサーバの実行ユーザ名を入力してください。なにも入力しない場合は```apache```となります。これは、ログディレクトリや設定ファイルのパーミッション設定に使用されます。
+
 ```bash
 Key color of your service               (default=Indigo)
-        Red     Pink    Purple  DeepPurple
-        Indigo  Blue    LightBlue       Cyan
-        Teal    Green   LightGreen      Lime
-        Yellow  Amber   Orange  DeepOrange
-        Brown   Grey    BlueGrey
+        Red           Pink          Purple        DeepPurple
+        Indigo        Blue          LightBlue     Cyan
+        Teal          Green         LightGreen    Lime
+        Yellow        Amber         Orange        DeepOrange
+        Brown         Grey          BlueGrey
 > 
 ```
-設定項目はこれで完了です。
+最後に、ページのアクセントカラーを選びます。複数の宴会さんを利用する際は別の色を割り当てる事によって、混同を避ける事かできます。
+
+設定項目はこれで完了です。インストールが成功すれば以下のようなメッセージが最後に表示されます。
+
+```bash
+[Done!]
+        See index.php?admin=yourPassword
+```
+
+## 新規アンケート作成
+
+Webブラウザで管理者ページを開きます。上記の例では```https://enkai.yokoyama.ac/index.php?admin=yourPassword```が管理者ページのURLになります。
