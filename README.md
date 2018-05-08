@@ -30,8 +30,8 @@ $ cat <<EOF | sudo tee /etc/httpd/conf.d/enkaisan.conf
   </Directory>
 </VirtualHost>
 $ systemctl restart httpd
-$ git clone https://github.com/abarth500/EnkaiSan.git
-$ cp EnkaiSan/* .
+$ git --depth 1 https://github.com/abarth500/EnkaiSan.git
+$ cp -r EnkaiSan/* .
 ```
 これで、インストールとApacheの設定が出来ました。指定したURLにアクセスして```HELLO WORLD```と表示されれば成功です。また```/vote/.htaccess```にアクセスしてファイルが表示されない事を確認してください。この```vote```フォルダがWebに公開されていると、ニュースとかを良く騒がせる、いわゆる「個人情報がWebでだれでも見られる状態になったいた」という事になりますので、必ず確認してください。尚、上記のコマンドが正しく実行されて居れば、```vote```フォルダへのアクセスは拒否されます。
 
