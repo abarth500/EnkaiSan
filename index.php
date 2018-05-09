@@ -25,7 +25,7 @@ if (file_exists($DIR . '.config')) {
     $CONFIG = json_decode(trim(file_get_contents($DIR . '.config')), true);
 } else {
     $CONFIG = array(
-        "title" => "Enkai San (Rapid QA Service)",
+        "title" => "Comitteee of Banquet",
         "color" => "Indigo",
     );
 }
@@ -72,6 +72,7 @@ if (php_sapi_name() == 'cli') {
     echo "Envelope From Address:\n> ";
     $SENDER = trim(fgets(STDIN));
     $rtn = file_put_contents($DIR . '.sender', $SENDER);
+    
     echo "\t->set:\t" . ($rtn ? 'true' : 'false') . "\n";
     echo "\n";
     //--
@@ -82,7 +83,7 @@ if (php_sapi_name() == 'cli') {
     }
     //--
     echo "\n";
-    echo "Title of Your Service\t\t(default=" . $CONFIG['title'] . ")\n> ";
+    echo "Organisation/Comittee Name\t\t(default=" . $CONFIG['title'] . ")\n> ";
     $rtn = trim(fgets(STDIN));
     if ($rtn != "") {
         $CONFIG['title'] = $rtn;
@@ -300,7 +301,7 @@ if (!isset($_REQUEST["u"])) {
                 ?>
 <div class="container">
 <div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
-  <h1 class="display-4"><?=$CONFIG['title']?></h1>
+  <h1 class="display-4"><span class="badge badge-secondary">宴会さん</span><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
   <hr class="my-4">
 	<p class="lead">
@@ -314,7 +315,7 @@ if (!isset($_REQUEST["u"])) {
 <h3>イベントについて</h3>
 <div class="form-group">
     <label for="inputEvent">イベント名</label>
-    <input type="text" name="event" class="form-control" id="inputEvent" placeholder="「教員親睦会 新任教員歓迎会 (〇月●日)」等イベント名を入力してください。">
+    <input type="text" name="event" class="form-control" id="inputEvent" placeholder="「教員親睦会 新任教員歓迎会」等イベント名を入力してください。">
 </div>
 <h3>メールヘッダ情報</h3>
 <div class="form-group">
@@ -556,7 +557,7 @@ if (count($results) == 0) {
                 ?>
 <div class="container">
 <div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
-  <h1 class="display-4"><?=$CONFIG['title']?></h1>
+  <h1 class="display-4"><span class="badge badge-secondary">宴会さん</span><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
 <?php
@@ -754,7 +755,7 @@ fclose($fp);
                 ?>
 <div class="container">
 <div class="jumbotron text-white" style="background:<?=$COLOR[$CONFIG['color']]['dark']?>;">
-  <h1 class="display-4"><?=$CONFIG['title']?></h1>
+  <h1 class="display-4"><span class="badge badge-secondary">宴会さん</span><?=$CONFIG['title']?></h1>
   <p class="lead">宴会の出欠調査をメールで簡単に行うためのシステムです。</p>
 </div>
 <div class="alert alert-info" role="alert">
