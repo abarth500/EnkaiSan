@@ -16,6 +16,10 @@ sudo systemctl enable httpd
 sudo systemctl enable postfix
 sudo pear install -a Mail
 sudo pear install -a Net_SMTP
+sudo firewall-cmd --add-service=http
+sudo firewall-cmd --add-service=http --permanent
+sudo firewall-cmd --add-service=smtp
+sudo firewall-cmd --add-service=smtp --permanent
 ```
 
 ## DNSの設定
@@ -206,6 +210,12 @@ sudo certbot --apache
 
 ```bash
 less /etc/httpd/conf.d/enkaisan-le-ssl.conf
+```
+
+最後にファイアウォールにルールを追加しておきましょう。
+```bash
+sudo firewall-cmd --add-service=https
+sudo firewall-cmd --add-service=https --permanent
 ```
 
 尚、Fedora/CentOSおよびApacheを使う事を前提で説明していますが、他の環境でもSSL対応は簡単です。以下のページを参考にしてください。
