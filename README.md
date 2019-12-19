@@ -9,13 +9,11 @@
 ## 環境構築
 サーバには事前にHTTPd、SMTP、PHPと、それらに関連したライブラリがインストールされている必要があります。以下、Fedora/CentOSのコマンド例です。
 ```
-sudo yum install httpd php php-mbstring php-pear postfix
+sudo yum install httpd php php-mbstring postfix
 sudo systemctl start httpd
 sudo systemctl start postfix
 sudo systemctl enable httpd
 sudo systemctl enable postfix
-sudo pear install -a Mail
-sudo pear install -a Net_SMTP
 sudo firewall-cmd --add-service=http
 sudo firewall-cmd --add-service=http --permanent
 sudo firewall-cmd --add-service=smtp

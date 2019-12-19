@@ -154,7 +154,20 @@ $URL = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] != "off") ? "https://" :
 
 function sendMail($to, $subject, $body, $from, $sender)
 {
-    if ((@include_once ('Mail.php')) !== false) {
+    if((@include_once ('PHPMailer.php')) !== false){
+        $mail->isSMTP(); // Set mailer to use SMTP
+        $mail->Encoding = "7bit";
+        $mail->CharSet = 'ISO-2022-JP';
+        $mail->Host = 'localhost';
+        $mail->Port = 25;
+        $mail->setFrom($sender);
+        $mail->addAddress($to);
+        $mail->addReplyTo($from);
+        $mail->isHTML(false);
+        $mail->Subject = mb_encode_mimeheader($subject, 'ISO-2022-JP');
+        $mail->Body = mb_convert_encoding($body, "JIS");
+        $mail->send();
+    } /*else if ((@include_once ('Mail.php')) !== false) {
         $headers = array(
             "To" => $to,
             "From" => $from,
@@ -165,7 +178,7 @@ function sendMail($to, $subject, $body, $from, $sender)
         $smtp = Mail::factory('smtp', array());
         $mail = $smtp->send($to, $headers, $body);
         return !(PEAR::isError($mail));
-    } else {
+    } */ else {
         return mb_send_mail($to, $subject, $body, "From: " . $from . " \n", "-f" . $sender);
     }
 }
